@@ -18,13 +18,14 @@ import org.andengine.entity.util.FPSCounter;
 import org.andengine.extension.tmx.TMXLayer;
 import org.andengine.extension.tmx.TMXTiledMap;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.util.algorithm.path.astar.AStarPathFinder;
 import org.andengine.util.color.Color;
 
 import android.util.Log;
 
 import com.towertest.BuildTowerTouchHandler;
 import com.towertest.Utils;
+import com.towertest.builders.EnemyBuilder;
+import com.towertest.builders.TowerBuilder;
 import com.towertest.hud.ProgressBar;
 import com.towertest.logic.GameMap;
 import com.towertest.logic.Level;
@@ -34,15 +35,22 @@ import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
 import com.towertest.managers.SceneManager.SceneType;
 import com.towertest.sprites.Enemy;
-import com.towertest.sprites.LongRangeTower;
 import com.towertest.sprites.Tower;
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	// ===========================================================
 	// Constants
 	// ===========================================================
-	public static final int TOWER_WIDTH = 96;
-	public static final int TOWER_HEIGHT = 96;
+	public static final int TILE_WIDTH = ResourceManager.getInstance().tmxTiledMap
+			.getTileWidth();
+	public static final int TILE_HEIGHT = ResourceManager.getInstance().tmxTiledMap
+			.getTileHeight();
+
+	public static final String TAG_TILED_PROPERTY_NAME_BUILDABLE = "Buildable";
+	public static final String TAG_TILED_PROPERTY_NAME_PATH = "Path";
+
+	public static final String TAG_TILED_PROPERTY_VALUE_TRUE = "True";
+	public static final String TAG_TILED_PROPERTY_VALUE_FALSE = "False";
 
 	// ===========================================================
 	// Fields
@@ -76,8 +84,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	private ArrayList<Tower> arrayTower;
 	private ArrayList<Enemy> arrayEn;
-
-	private AStarPathFinder<Enemy> finder = new AStarPathFinder<Enemy>();
 
 	private ArrayList<Tower> prototypeTowers;
 	private Enemy[] enemyClone;
@@ -139,14 +145,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		this.rowMax = pRowMax;
 	}
 
-	public AStarPathFinder<Enemy> getFinder() {
-		return finder;
-	}
-
-	public void setFinder(AStarPathFinder<Enemy> finder) {
-		this.finder = finder;
-	}
-
 	public Level getCurrentLevel() {
 		return currentLevel;
 	}
@@ -187,6 +185,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		this.allowDiagonal = allowDiagonal;
 	}
 
+	public ArrayList<Tower> getArrayTower() {
+		return arrayTower;
+	}
+
+	public void setArrayTower(ArrayList<Tower> arrayTower) {
+		this.arrayTower = arrayTower;
+	}
+
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -194,40 +200,39 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	public void createScene() {
 		setBackground(new Background(Color.BLUE));
 
-		Log.i("Location:", "onCreateScene");
-		// HUD does not move with camera, it is stationary
-		hud = new HUD();
-
-		lStarts = new Waypoint[] { new Waypoint(0, 0) };
-		lEnds = new Waypoint[] { new Waypoint(15, 1) };
-
-		map = new GameMap(lStarts, lEnds);
-
 		tmxTiledMap = ResourceManager.getInstance().tmxTiledMap;
 		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
 
-		enemyClone = new Enemy[lStarts.length];
-		setArrayEn(new ArrayList<Enemy>());
-		for (int i = 0; i < enemyClone.length; i++) {
-			enemyClone[i] = new Enemy(
-					Utils.getXFromCol(map.getStartLoc()[0].x),
-					Utils.getXFromCol(map.getStartLoc()[0].y), 96, 96,
-					ResourceManager.getInstance().enemyTexture, vbom, map);
+		hud = new HUD();
 
-			enemyClone[i].createPath(lEnds[0], activity, tmxLayer, getArrayEn());
+		lStarts = new Waypoint[] { new Waypoint(0, 0) };
+		lEnds = new Waypoint[] { new Waypoint(tmxTiledMap.getTileColumns(), 0) };
+
+		map = new GameMap(lStarts, lEnds);
+
+		enemyClone = new Enemy[lStarts.length];
+		arrayEn = new ArrayList<Enemy>();
+		arrayTower = new ArrayList<Tower>();
+
+		EnemyBuilder enBuilder = new EnemyBuilder(this);
+
+		for (int i = 0; i < enemyClone.length; i++) {
+			enemyClone[i] = enBuilder
+					.setX(Utils.getXFromCol(map.getStartLoc()[i].x))
+					.setY(Utils.getXFromCol(map.getStartLoc()[i].y))
+					.setHealth(1000)
+					.setTexture(ResourceManager.getInstance().enemyTexture)
+					.setSpeed(60f).build();
+
+			enemyClone[i]
+					.createPath(lEnds[0], activity, tmxLayer, getArrayEn());
 		}
 
-		waves = new Wave[] { new Wave(new int[] { 500 }, enemyClone, 2f) };
+		waves = new Wave[] {
+				new Wave(new int[] { 2 }, new Enemy[] { enemyClone[0] }, 2f),
+				new Wave(new int[] { 3 }, new Enemy[] { enemyClone[0] }, 2f) };
 		currentLevel = new Level(waves, map);
 
-		// number of enemies remaining
-		waveProgress = new ProgressBar(20, 70, 100, 10,
-				currentLevel.getWaves().length, 0, vbom);
-
-		waveProgress.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
-				.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
-				.setBackColor(0.0f, 0.0f, 0.0f, 0.2f);
-		waveProgress.setProgress(0);
 		camera.setHUD(hud);
 		hud.attachChild(waveProgress);
 
@@ -236,43 +241,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		setRowMax(tmxLayer.getTileRows() - 1 + 1);
 		// tmxTileProperty =
 		// this.mTMXTiledMap.getTMXTilePropertiesByGlobalTileID(0));
-		attachChild(getTmxLayer());
-
-		// final TMXObjectGroup tmxObjectGroup =
-		// this.mTMXTiledMap.getTMXObjectGroups().get(0);
-		// if(tmxObjectGroup.getTMXObjectGroupProperties().containsTMXProperty("type",
-		// "collision"))
-
-		// =====================================
-		// Interface & HUD
-		// =====================================
-		// mScrollDetector = new SurfaceScrollDetector(this);
-		// mPinchZoomDetector = new PinchZoomDetector(this);
-		// mPinchZoomDetector.setEnabled(true);
-		// @Override public void onPinchZoom(final PinchZoomDetector
-		// pPinchZoomDetector, final TouchEvent pTouchEvent, final float
-		// pZoomFactor) {
-		// this.mCamera.setZoomFactor(Math.min( Math.max(this.maxZoom,
-		// this.mPinchZoomStartedCameraZoomFactor pZoomFactor), 2)); }
-
-		// @Override public void onPinchZoomFinished(final PinchZoomDetector
-		// pPinchZoomDetector, final TouchEvent pTouchEvent, final float
-		// pZoomFactor) {
-		// this.mCamera.setZoomFactor(Math.min( Math.max(this.maxZoom,
-		// this.mPinchZoomStartedCameraZoomFactor pZoomFactor), 2)); } };
+		attachChild(tmxLayer);
 
 		fpsCounter = new FPSCounter();
 		engine.registerUpdateHandler(fpsCounter);
-
-		// xcoord,ycoord,font,initial text?,length,vbom
-		final Rectangle fpsMask = makeColoredRectangle(
-				(int) camera.getWidth() - 100, 20, 20, 100, .8f, .8f, .8f, 1f);
-		hud.attachChild(fpsMask);
-		fpsText = new Text(camera.getWidth() - 100, 20,
-				ResourceManager.getInstance().font20, "FPS:",
-				"FPS: xxx.xx".length(), ResourceManager.getInstance().vbom);
-		creditMask = makeColoredRectangle(20, 20, 40, 100, .8f, .8f, .8f, 1f);
-		hud.attachChild(creditMask);
 
 		// Pause button
 		pauseButton = new ButtonSprite(camera.getWidth() - 180, 20,
@@ -285,46 +257,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						togglePauseGame();
 					}
 				});
-		// pauseButton.setCurrentTileIndex(1);
+
 		hud.attachChild(pauseButton);
 		hud.registerTouchArea(pauseButton);
 
-		creditText = new Text(20, 20, ResourceManager.getInstance().font40,
-				"$", 12, ResourceManager.getInstance().vbom);
-		livesText = new Text(20, 40 + creditText.getHeight()
-				+ waveProgress.getHeight(),
-				ResourceManager.getInstance().font40, "", 12,
-				ResourceManager.getInstance().vbom);
-		livesMask = makeColoredRectangle(20, 40 + creditText.getHeight()
-				+ waveProgress.getHeight(), 40, 100, .8f, .8f, .8f, 1f);
-		hud.attachChild(livesMask);
-
-		// final Entity rectangleGroup = new Entity(camera.getWidth() / 2,
-		// CAMERA_HEIGHT / 2); //group shapes together
-
-		// Initialize the credits they have to display it at first
-		setCredits(initialCredits);
-		addCredits(0); // initialize the value
-
-		lives = initialLives;
-		subtractLives(0); // initialize the value
-
-		hud.attachChild(fpsText);
-		hud.attachChild(creditText);
-		hud.attachChild(livesText);
-
-		// TODO setup build buttons in HUD
-
-		// =====================================
-		// Tower & Enemy stuff
-		// =====================================
-		arrayTower = new ArrayList<Tower>();
-		// arrayBullet = new ArrayList<Sprite>(); //useless // we have array of
-		// bullets in Tower class
-		setArrayEn(new ArrayList<Enemy>());
-		setFinder(new AStarPathFinder<Enemy>());
-
-		Log.i("Location:", "registerUpdateHandler");
 		hudLoop = new IUpdateHandler() {
 			@Override
 			public void reset() {
@@ -339,9 +275,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		registerUpdateHandler(hudLoop);
-		// hud.setOnSceneTouchListener(this); //TODO enable these two lines
-		// hud.setTouchAreaBindingOnActionDownEnabled(true);
-		// Register our update Handler
+
 		loop = new IUpdateHandler() {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
@@ -358,42 +292,59 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		setOnSceneTouchListener(this);
 
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
+		
+		// number of enemies remaining
+				waveProgress = new ProgressBar(20, 70, 100, 10,
+						currentLevel.getWaves().length, 0, vbom);
+
+				waveProgress.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
+						.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
+						.setBackColor(0.0f, 0.0f, 0.0f, 0.2f);
+
+				waveProgress.setProgress(0);
+		
+		fpsText = new Text(camera.getWidth() - 100, 20,
+				ResourceManager.getInstance().font20, "FPS:",
+				"FPS: xxx.xx".length(), ResourceManager.getInstance().vbom);
+		creditText = new Text(20, 20, ResourceManager.getInstance().font40,
+				"$", 12, ResourceManager.getInstance().vbom);
+		
+		livesText = new Text(20, 40 + creditText.getHeight()
+				+ waveProgress.getHeight(),
+				ResourceManager.getInstance().font40, "", 12,
+				ResourceManager.getInstance().vbom);
+
+		credits = initialCredits;
+		addCredits(0); // initialize the value
+
+		lives = initialLives;
+		subtractLives(0); // initialize the value
+		
+		Rectangle infoArea = new Rectangle(0, 0, camera.getWidth(), 100, vbom);
+		infoArea.setColor(Color.BLUE);
+		
 		// A tower button to build other towers xcoord,ycoord,xsize,ysize
 		prototypeTowers = new ArrayList<Tower>();
 
-		prototypeTowers.add(new Tower(
-				ResourceManager.getInstance().bulletTexture, 150, 0,
-				TOWER_WIDTH, TOWER_HEIGHT,
-				ResourceManager.getInstance().towerTexture, ResourceManager
-						.getInstance().hitAreaGoodTexture, ResourceManager
-						.getInstance().hitAreaBadTexture, this, arrayTower,
-				vbom, 1f));
+		TowerBuilder towerBuilder = new TowerBuilder(this);
 
-		prototypeTowers.add(new Tower(
-				ResourceManager.getInstance().bulletTexture, 300, 0,
-				TOWER_WIDTH, TOWER_HEIGHT,
-				ResourceManager.getInstance().towerTexture, ResourceManager
-						.getInstance().hitAreaGoodTexture, ResourceManager
-						.getInstance().hitAreaBadTexture, this, arrayTower,
-				vbom, 3f));
+		Rectangle prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
+				56, camera.getHeight(), vbom);
+		prototypeTowerArea.setColor(Color.BLUE);
 
-		prototypeTowers.add(new LongRangeTower(
-				ResourceManager.getInstance().bulletTexture, 450, 0,
-				TOWER_WIDTH, TOWER_HEIGHT,
-				ResourceManager.getInstance().towerTexture, ResourceManager
-						.getInstance().hitAreaGoodTexture, ResourceManager
-						.getInstance().hitAreaBadTexture, this, arrayTower,
-				vbom));
-		// TODO add to hud
+		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3).build());
+		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(5).build());
 
 		for (Tower tower : prototypeTowers) {
-			hud.attachChild(tower);
+			prototypeTowerArea.attachChild(tower);
 			hud.registerTouchArea(tower);
 		}
 
+		hud.attachChild(prototypeTowerArea);
+
 		// allows you to drag it
 		final BuildTowerTouchHandler btth = new BuildTowerTouchHandler(
-				prototypeTowers, this, getCredits(), arrayTower,
+				prototypeTowers, this, getCredits(), getArrayTower(),
 				ResourceManager.getInstance().hitAreaGoodTexture,
 				ResourceManager.getInstance().hitAreaBadTexture,
 				ResourceManager.getInstance().bulletTexture,
@@ -414,7 +365,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	@Override
 	public SceneType getSceneType() {
-		return null;
+		return SceneType.GAME_SCENE;
 	}
 
 	@Override
@@ -490,26 +441,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		// TODO WE SHOULD PROBABLY MULTITHREAD THIS LOOP FO' SHIZZLE!!!!!!
 		// ***************************************************************
 		if (getArrayEn().size() > 0) {
-			for (int j = 0; j < getArrayEn().size(); j++) {// iterate through the
-														// enemies
+			for (int j = 0; j < getArrayEn().size(); j++) {// iterate through
+															// the
+															// enemies
 				final Enemy enemy = getArrayEn().get(j);
 				// Lets Loop our Towers
-				for (int k = 0; k < arrayTower.size(); k++) {// iterate through
-																// the towers
-					final Tower tower = arrayTower.get(k);
+				for (int k = 0; k < getArrayTower().size(); k++) {// iterate
+																	// through
+																	// the
+																	// towers
+					final Tower tower = getArrayTower().get(k);
 					// check if they are in range of the tower
 					// TODO, add physics for collision
-					if (tower.distanceTo(enemy) < tower.maxRange()) { // if(enemy.collidesWith(tower)){
-						tower.fire(enemy, this, getArrayEn(), activity);// call
-																	// fire
-																	// and
-						// pass the
-						// tower and
-						// enemy to fire
-						// Log.i("Location:","Firing on enemy");
-						// TODO find a way to end thread?
-						// break; //do NOT enable this line or it will only
-						// allow ONE tower to fire!
+					if (tower.distanceTo(enemy) < tower.maxRange()) {
+						tower.fire(enemy, this, getArrayEn(), activity);
 					}
 				}
 			}

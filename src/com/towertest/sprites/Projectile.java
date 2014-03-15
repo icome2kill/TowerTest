@@ -6,7 +6,7 @@ import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.MoveByModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.modifier.IModifier;
@@ -25,15 +25,19 @@ public class Projectile extends Sprite {
 	Scene scene;
 	Enemy target;
 	Tower source;
-	public final static float speed = 70f; // movement speed higher is faster
-											// (distance to move per update)
+	private float speed = 70f; // movement speed higher is faster
+
 	public MoveByModifier trajectory;
 	public MoveByModifier targetTrajectory;
 	public static String texture = "bullet.png";
 
-	public Projectile(float pX, float pY, float pWidth, float pHeight, TextureRegion pTextureRegion, VertexBufferObjectManager tvbom, Scene sc) {
+	public Projectile(float pX, float pY, float pWidth, float pHeight, ITextureRegion pTextureRegion, VertexBufferObjectManager tvbom, Scene sc) {
 		super(pX, pY, pWidth, pHeight, pTextureRegion, tvbom);
 		scene = sc;
+	}
+	
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 
 	/**
@@ -80,7 +84,7 @@ public class Projectile extends Sprite {
 		//final double y0 = d0 * Math.sin(incAngle);// ; // starting y distance to target
 		final double x0 = d0 * Math.cos(incAngle);// ; // starting x distance to target
 		// this quadratic equation is based on the law of cosines, just FYI
-		final double a = Math.pow(target.speed, 2) - Math.pow(Projectile.speed, 2);
+		final double a = Math.pow(target.speed, 2) - Math.pow(speed, 2);
 		final double b = -2 * target.speed * x0;
 		final double c = Math.pow(d0, 2);
 		trajectoryReturn.t = (-b - Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a); // quadratic formula wee!
@@ -104,11 +108,11 @@ public class Projectile extends Sprite {
 			trajReturn = findTrajectory(curLink, totalDist);
 			totalDist += Math.sqrt(Math.pow(target.path.xyPath.get(curLink).x - target.path.xyPath.get(curLink-1).x, 2) + Math.pow(target.path.xyPath.get(curLink).y - target.path.xyPath.get(curLink-1).y, 2));
 		}
-		double bulletDist = Projectile.speed * trajReturn.t;
+		double bulletDist = speed * trajReturn.t;
 		double enTravelDist = target.speed * trajReturn.t;
 		// D=r*t
 		// therefore t = D/r
-		trajectory = new MoveByModifier((float) (bulletDist / Projectile.speed), (float) (trajReturn.x - getMidX() + Math.cos(trajReturn.enemyAngle) * enTravelDist),
+		trajectory = new MoveByModifier((float) (bulletDist / speed), (float) (trajReturn.x - getMidX() + Math.cos(trajReturn.enemyAngle) * enTravelDist),
 				(float) (trajReturn.y - getMidY() + Math.sin(trajReturn.enemyAngle) * enTravelDist));
 		trajectory.addModifierListener(new IModifierListener<IEntity>() {
 			@Override
@@ -127,8 +131,8 @@ public class Projectile extends Sprite {
 				});
 				source.removeBullet(Projectile.this);
 				// enemy takes damage
-				target.inboundDamage -= source.damage;
-				if (target.takeDamage(source.damage, source.damageType) < 1) { // then the enemy dies
+				target.inboundDamage -= source.getDamage();
+				if (target.takeDamage(source.getDamage(), source.getDamageType()) < 1) { // then the enemy dies
 					if (target.isAlive) { // this prevents getting multiple credits for one kill!
 						target.isAlive = false;
 						((GameScene) scene).addCredits(target.getCredits());
@@ -145,7 +149,7 @@ public class Projectile extends Sprite {
 			}
 		});
 		registerEntityModifier(trajectory);
-		target.inboundDamage += source.damage;
+		target.inboundDamage += source.getDamage();
 	}
 
 	public float getMidX() {

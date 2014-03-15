@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.andengine.entity.scene.IOnAreaTouchListener;
 import org.andengine.entity.scene.ITouchArea;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 
@@ -51,10 +51,10 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	// float touchX, touchY;
 	ArrayList<? extends Tower> buildTower; // List of prototype towers
 	ArrayList<Tower> arrayTower;
-	TextureRegion bulletTexture;
-	TextureRegion towerTexture;
-	TextureRegion hitAreaTextureGood;
-	TextureRegion hitAreaTextureBad;
+	ITextureRegion bulletTexture;
+	ITextureRegion towerTexture;
+	ITextureRegion hitAreaTextureGood;
+	ITextureRegion hitAreaTextureBad;
 	ArrayList<Enemy> arrayEn;
 	BaseGameActivity myContext;
 
@@ -82,8 +82,8 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	 */
 	public BuildTowerTouchHandler(ArrayList<? extends Tower> bt,
 			GameScene scene, long creds, ArrayList<Tower> al,
-			TextureRegion hagtex, TextureRegion habtex, TextureRegion btex,
-			TextureRegion ttex, Level pLevel, ArrayList<Enemy> pArrayEn,
+			ITextureRegion hagtex, ITextureRegion habtex, ITextureRegion btex,
+			ITextureRegion ttex, Level pLevel, ArrayList<Enemy> pArrayEn,
 			BaseGameActivity pMyContext, VertexBufferObjectManager vbom) { // Scene
 																			// h,
 		this.scene = scene;
@@ -111,8 +111,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 													// area BEFORE setting
 													// moveable to false!
 				tw.moveable = false;
-				if (tw.hasPlaceError()
-						|| scene.getCredits() < tw.getCredits()) {
+				if (tw.hasPlaceError() || scene.getCredits() < tw.getCredits()) {
 					// refund credits and remove tower, because they can't place
 					// it
 					// where it is
@@ -152,29 +151,29 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 								.getY() + startingOffsetY)
 								- buildableTower.getYHandleOffset();
 
-						tw = new Tower(bulletTexture, newX, newY, 96, 96,
-								towerTexture, hitAreaTextureGood,
-								hitAreaTextureBad, scene, arrayTower,
+						tw = new Tower(newX, newY, buildableTower.getBulletTexture(), buildableTower.getTowerTexture(), GameScene.TILE_WIDTH,
+								GameScene.TILE_HEIGHT, scene,
 								ResourceManager.getInstance().vbom,
 								buildableTower.getRange()) {
-
 							@Override
 							public boolean onAreaTouched(
 									TouchEvent pSceneTouchEvent,
 									float pTouchAreaLocalX,
 									float pTouchAreaLocalY) {
-								return towerTouchEvent(pSceneTouchEvent,
-										this);
+								return towerTouchEvent(pSceneTouchEvent, this);
 							}
-
 						};
+
+						tw.setDamage(buildableTower.getDamage());
+						tw.setCooldown(buildableTower.getCD());
+						tw.setCredits(buildableTower.getCredits());
+						tw.setMaxLevel(buildableTower.getMaxLevel());
+						tw.setBulletSpeed(buildableTower.getBulletSpeed());
 
 						tw.checkClearSpotAndPlace(scene, newX, newY);
 						tw.setHitAreaShown(scene, true);
 						arrayTower.add(tw); // add to array
-						scene.registerTouchArea(tw); // register touch area , so
-														// this
-														// allows you to drag it
+						scene.registerTouchArea(tw);  
 						scene.attachChild(tw); // add it to the scene
 						break;
 					}
@@ -223,7 +222,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 			// store x and y for next move event
 			lastX = pSceneTouchEvent.getX();
 			lastY = pSceneTouchEvent.getY();
-			if (distTraveled < GameScene.TOWER_HEIGHT) {
+			if (distTraveled < GameScene.TILE_HEIGHT) {
 				// Log.e("TowerCreate","distTraveled:"+distTraveled+"<TOWER_HEIGHT:"+TowerTest.TOWER_HEIGHT);
 				return true; // tell it we handled the touch event, because they
 								// haven't gone far enough (should be true)
@@ -246,7 +245,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 			GameActivity.currentXoffset = 0;
 			GameActivity.currentYoffset = 0;
 			if (showHitArea) {
-				thisTower.remove(thisTower, true, scene);
+				thisTower.remove(true, scene);
 				// this.setHitAreaShown(scene, !this.getHitAreaShown()); //
 				// toggle hit area circle
 				// TODO I have this temporarily disabled so we can quickly tap

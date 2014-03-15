@@ -8,11 +8,11 @@ import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.extension.tmx.TMXLayer;
 import org.andengine.extension.tmx.TMXLoader;
+import org.andengine.extension.tmx.TMXLoader.ITMXTilePropertiesListener;
 import org.andengine.extension.tmx.TMXProperties;
 import org.andengine.extension.tmx.TMXTile;
 import org.andengine.extension.tmx.TMXTileProperty;
 import org.andengine.extension.tmx.TMXTiledMap;
-import org.andengine.extension.tmx.TMXLoader.ITMXTilePropertiesListener;
 import org.andengine.extension.tmx.util.exception.TMXLoadException;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -23,8 +23,8 @@ import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
-import org.andengine.opengl.texture.region.TextureRegion;
-import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -32,7 +32,9 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 import com.towertest.GameActivity;
+import com.towertest.scenes.GameScene;
 import com.towertest.sprites.Enemy;
+import com.towertest.sprites.Projectile;
 import com.towertest.sprites.Tower;
 
 public class ResourceManager {
@@ -40,6 +42,11 @@ public class ResourceManager {
 	// Constants
 	// ===========================================================
 	private static final ResourceManager INSTANCE = new ResourceManager();
+
+	public static int TILEID_BLOCKED = 100; // BLock is both not pathable nor buildable
+	public static int TILEID_PATH = 1;
+	public static int TILEID_UNPATHABLE = 1;
+
 	// ===========================================================
 	// Fields
 	// ===========================================================
@@ -49,20 +56,20 @@ public class ResourceManager {
 	public GameActivity activity;
 
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
-	public TextureRegion towerTexture;
-	public TiledTextureRegion enemyTexture;
-	public TextureRegion bulletTexture;
-	public TextureRegion hitAreaGoodTexture;
-	public TextureRegion hitAreaBadTexture;
-	public TextureRegion texPause;
-	public TextureRegion texPlay;
+	public ITiledTextureRegion towerTexture;
+	public ITiledTextureRegion enemyTexture;
+	public ITextureRegion bulletTexture;
+	public ITextureRegion hitAreaGoodTexture;
+	public ITextureRegion hitAreaBadTexture;
+	public ITextureRegion texPause;
+	public ITextureRegion texPlay;
 	public TMXTiledMap tmxTiledMap;
 	public Sound fireSound;
 
 	private BuildableBitmapTextureAtlas mainMenuTextureAtlas;
-	public TextureRegion btnOptionsTexture;
-	public TextureRegion btnAboutTexture;
-	public TextureRegion btnPlayTexture;
+	public ITextureRegion btnOptionsTexture;
+	public ITextureRegion btnAboutTexture;
+	public ITextureRegion btnPlayTexture;
 
 	public Font font10;
 	public Font font20;
@@ -120,19 +127,20 @@ public class ResourceManager {
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(
 				activity.getTextureManager(), 1024, 1024);
 
-		towerTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				gameTextureAtlas, activity, Tower.texture);
+		towerTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+				gameTextureAtlas, activity, Tower.texture, 6, 2);
 		bulletTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
-				gameTextureAtlas, activity, "towerRangeGood.png");
+				gameTextureAtlas, activity, Projectile.texture);
 		hitAreaGoodTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity,
 						"towerRangeGood.png");
 		hitAreaBadTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity,
 						"towerRangeBad.png");
-		enemyTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
-				gameTextureAtlas, activity, Enemy.texture, 3, 1);
-
+		enemyTexture = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(gameTextureAtlas, activity,
+						Enemy.TEXTURE, 6, 1);
+		
 		texPause = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "pause.png");
 		texPlay = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -161,6 +169,27 @@ public class ResourceManager {
 								final TMXLayer pTMXLayer,
 								final TMXTile pTMXTile,
 								final TMXProperties<TMXTileProperty> pTMXTileProperties) {
+							if (pTMXTileProperties != null) {
+								if (pTMXTileProperties
+										.containsTMXProperty(
+												GameScene.TAG_TILED_PROPERTY_NAME_BUILDABLE,
+												GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
+									// Unbuildable tile
+									TILEID_BLOCKED = pTMXTile.getGlobalTileID();
+								}
+								if (pTMXTileProperties
+										.containsTMXProperty(
+												GameScene.TAG_TILED_PROPERTY_NAME_PATH,
+												GameScene.TAG_TILED_PROPERTY_VALUE_TRUE)) {
+									TILEID_PATH = pTMXTile.getGlobalTileID();
+								} else if (pTMXTileProperties
+										.containsTMXProperty(
+												GameScene.TAG_TILED_PROPERTY_NAME_PATH,
+												GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
+									TILEID_UNPATHABLE = pTMXTile
+											.getGlobalTileID();
+								}
+							}
 						}
 					});
 			// Load the Desert Map
@@ -168,6 +197,7 @@ public class ResourceManager {
 			tmxTiledMap = tmxLoader.loadFromAsset("tmx/grid.tmx");
 			Log.i("Location:", "TMXMap Loaded");
 		} catch (final TMXLoadException e) {
+			Log.e("Resource Manager", "Load tmx map failed. Check this!");
 			Debug.e(e);
 		}
 	}
@@ -184,13 +214,18 @@ public class ResourceManager {
 
 	private void loadMainMenuGraphics() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		mainMenuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024);
-		
-		btnPlayTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mainMenuTextureAtlas, activity, "play.png");
-		btnOptionsTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mainMenuTextureAtlas, activity, "pause.png");
-		
+		mainMenuTextureAtlas = new BuildableBitmapTextureAtlas(
+				activity.getTextureManager(), 1024, 1024);
+
+		btnPlayTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(mainMenuTextureAtlas, activity, "play.png");
+		btnOptionsTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(mainMenuTextureAtlas, activity, "pause.png");
+
 		try {
-			mainMenuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			mainMenuTextureAtlas
+					.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(
+							0, 1, 0));
 			mainMenuTextureAtlas.load();
 		} catch (TextureAtlasBuilderException e) {
 			Log.e("Resource Manager", "Error loadding main menu graphic");
@@ -199,19 +234,19 @@ public class ResourceManager {
 	}
 
 	private void loadMainMenuAudio() {
-		
+
 	}
-	
+
 	public void unloadMainMenuResources() {
 		mainMenuTextureAtlas.unload();
 	}
-	
+
 	public void loadMapSelectResources() {
-		
+
 	}
-	
+
 	public void loadLevelSelectResources() {
-		
+
 	}
 
 	public void loadFonts() {

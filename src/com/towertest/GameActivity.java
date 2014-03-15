@@ -74,12 +74,8 @@ import com.towertest.sprites.Tower;
 public class GameActivity extends SimpleBaseGameActivity {
 	private ResourceManager resourceManager;
 	
-	public static int CAMERA_WIDTH = 1400;
-	public static int CAMERA_HEIGHT = 840;
-	
-	public final static int TILEID_BLOCKED = 31;
-	public final static int TILEID_CLEAR = 30;
-	public final static int TILEID_UNPATHABLE = 29;
+	public static int CAMERA_WIDTH = 800;
+	public static int CAMERA_HEIGHT = 480;
 	
 	private Camera camera;
 	/** used to offset the pan to adjust for panning from a tower */
@@ -102,7 +98,7 @@ public class GameActivity extends SimpleBaseGameActivity {
 		final DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		camera = new Camera(0, -100, CAMERA_WIDTH, CAMERA_HEIGHT);
+		camera = new Camera(0, -40, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		final EngineOptions mEngine = new EngineOptions(true,
 				ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(

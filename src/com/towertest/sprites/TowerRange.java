@@ -1,8 +1,10 @@
 package com.towertest.sprites;
 
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+
+import com.towertest.Utils;
 
 public class TowerRange extends Sprite {
 	private int zIndex = 2000; // show above the towers
@@ -15,13 +17,13 @@ public class TowerRange extends Sprite {
 	 * @param pTextureRegion
 	 * @param tvbom
 	 */
-	public TowerRange(float pX, float pY, TextureRegion pTextureRegion, VertexBufferObjectManager tvbom) {
+	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion, VertexBufferObjectManager tvbom) {
 		super(pX, pY, pTextureRegion, tvbom);
 		this.setZIndex(zIndex);
 	}
 	
-	public TowerRange(float pX, float pY, TextureRegion pTextureRegion, VertexBufferObjectManager tvbom, float rangeMultiplier) {
-		super(pX, pY, pTextureRegion.getWidth() * rangeMultiplier, pTextureRegion.getHeight() * rangeMultiplier, pTextureRegion, tvbom);
+	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion, VertexBufferObjectManager tvbom, int range) {
+		super(pX, pY, Utils.getXFromCol(range), Utils.getXFromCol(range), pTextureRegion, tvbom);
 		this.setZIndex(zIndex);
 	}
 }

@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.towertest.Utils;
 import com.towertest.managers.ResourceManager;
+import com.towertest.scenes.GameScene;
 import com.towertest.sprites.Enemy;
 
 /**
@@ -169,11 +170,14 @@ public class Path implements Cloneable {
 			try {
 				TMXTile tmxTile = tmxlayer.getTMXTileAt(Utils.getXFromCol(pX),
 						Utils.getYFromRow(pY));
-				TMXProperties<TMXTileProperty> tmxTileProperties = ResourceManager
-						.getInstance().tmxTiledMap.getTMXTileProperties(tmxTile
-						.getGlobalTileID());
-				if (tmxTileProperties
-						.containsTMXProperty("Collidable", "False")) {
+
+				TMXProperties<TMXTileProperty> properties = tmxTile
+						.getTMXTileProperties(ResourceManager.getInstance().tmxTiledMap);
+
+				if (properties != null
+						&& properties.containsTMXProperty(
+								GameScene.TAG_TILED_PROPERTY_NAME_PATH,
+								GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
 					// set the circle to red
 					// it is blocked!
 					return true;
@@ -185,7 +189,8 @@ public class Path implements Cloneable {
 				// its broken! (can't get the value)
 
 				for (int i = 0; i < map.getEndLoc().length; i++) {
-					if ((pX == map.getEndLoc()[i].x) && (pY == map.getEndLoc()[i].y)) {
+					if ((pX == map.getEndLoc()[i].x)
+							&& (pY == map.getEndLoc()[i].y)) {
 						return false;
 					}
 				}

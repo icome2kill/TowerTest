@@ -67,9 +67,9 @@ public class Wave {
 		if (index == enemies.length) {
 			return null;
 		}
-		count++;
 		Enemy enemy = enemies[index].clone();
-		if (count > numberOfEnemies[index]) {
+		if (++count == numberOfEnemies[index]) {
+			count = 0;
 			index++;
 		}
 		return enemy;

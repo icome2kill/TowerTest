@@ -3,10 +3,13 @@ package com.towertest.sprites;
 import java.util.ArrayList;
 
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.tmx.TMXProperties;
 import org.andengine.extension.tmx.TMXTile;
 import org.andengine.extension.tmx.TMXTileProperty;
+import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
@@ -14,7 +17,6 @@ import org.andengine.ui.activity.BaseGameActivity;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.towertest.GameActivity;
 import com.towertest.Utils;
 import com.towertest.logic.Path;
 import com.towertest.managers.ResourceManager;
@@ -28,34 +30,62 @@ import com.towertest.scenes.GameScene;
  * @see Projectile
  * @see SplashTower
  */
-public class Tower extends Sprite {
+public class Tower extends AnimatedSprite {
 	// I am Tower class and have my own bullets //
 	// TODO fire range, acquisition range, pattern/type.
-	public static String texture = "tower.png";
-	protected long cooldown = 500; // in milliseconds | 1 sec = 1,000 millisec
-	protected long credits = 50; // cost to build tower in credits
-	protected int level = 1; // level of tower
-	protected int maxLevel = 10; // level of tower
-	public final int damage = 100; // Tower damage
-	public String damageType = "normal";
-	protected float cdMod = 0.5f;
-	protected long lastFire = 0;
-	protected float range;
-	protected static int total = 0; // total number of this type of tower
-	
-	public float getRange() {
+	public static String texture = "tower_new.png";
+	private int damage = 100; // Tower damage
+	private String damageType = "normal";
+
+	private long cooldown = 500; // in milliseconds | 1 sec = 1,000 millisec
+	private long credits = 50; // cost to build tower in credits
+	private int level = 1; // level of tower
+	private int maxLevel = 10; // level of tower
+	private float bulletSpeed;
+
+	public float getBulletSpeed() {
+		return bulletSpeed;
+	}
+
+	public void setBulletSpeed(float bulletSpeed) {
+		this.bulletSpeed = bulletSpeed;
+	}
+
+	public int getMaxLevel() {
+		return maxLevel;
+	}
+
+	private float cdMod = 0.5f;
+	private long lastFire = 0;
+	private int range; // As tile unit
+	private static int total = 0; // total number of this type of tower
+
+	public int getRange() {
 		return range;
 	}
 
-	public TextureRegion towerTexture;
-	public TextureRegion bulletTexture;
+	public ITextureRegion getBulletTexture() {
+		return bulletTexture;
+	}
+
+	public void setBulletTexture(TextureRegion bulletTexture) {
+		this.bulletTexture = bulletTexture;
+	}
+
+	private ITiledTextureRegion towerTexture;
+
+	public ITiledTextureRegion getTowerTexture() {
+		return towerTexture;
+	}
+
+	private ITextureRegion bulletTexture;
 	private boolean placeError = false;
 	private boolean hitAreaShown = false;
 	private boolean hitAreaGoodShown = false;
 	private boolean hitAreaBadShown = false;
 	private int zIndex = 1000;
-	public TextureRegion hitAreaGoodTexture;
-	public TextureRegion hitAreaBadTexture;
+	public ITextureRegion hitAreaGoodTexture;
+	public ITextureRegion hitAreaBadTexture;
 	TowerRange towerRangeGood;
 	TowerRange towerRangeBad;
 	/**
@@ -63,8 +93,7 @@ public class Tower extends Sprite {
 	 * shoot, false means it can do neither thing
 	 */
 	public boolean moveable = true;
-	Projectile SpriteBullet;
-	static ArrayList<Tower> arrayTower;
+	private Projectile spriteBullet;
 	static Scene scene;
 	static float lastCheckedX = 0;
 	static float lastCheckedY = 0;
@@ -88,35 +117,31 @@ public class Tower extends Sprite {
 	 *            width of tower
 	 * @param pHeight
 	 *            height of tower
-	 * @param pTextureRegion
-	 *            I don't think this is even used? :-\
 	 * @param tvbom
 	 *            VertexBufferObjectManager
 	 */
-	public Tower(TextureRegion b, float pX, float pY, float pWidth,
-			float pHeight, TextureRegion pTextureRegion,
-			TextureRegion hitAreaTextureGood, TextureRegion hitAreaTextureBad,
-			Scene pScene, ArrayList<Tower> pArrayTower,
-			VertexBufferObjectManager tvbom, float range) {
-		super(pX, pY, pWidth, pHeight, pTextureRegion, tvbom);
-		// towerRangeGood.setPosition(pX, pY);
-		bulletTexture = b; // we need bullet TextureRegion to make one
-		// x=pX; //some x n y of the tower
-		// y=pY;
+	public Tower(float pX, float pY, ITextureRegion bulletTexture,
+			ITiledTextureRegion towerTexture, float pWidth, float pHeight,
+			Scene pScene, VertexBufferObjectManager tvbom, int range) {
+		super(pX, pY, pWidth, pHeight, towerTexture, tvbom);
+		this.bulletTexture = bulletTexture;
+		this.towerTexture = towerTexture;
 		scene = pScene;
 		this.range = range;
 		arrayBullets = new ArrayList<Projectile>(); // create a new ArrayList
-		towerRangeGood = new TowerRange(0, 0, hitAreaTextureGood,
-				getVertexBufferObjectManager(), range);
-		towerRangeBad = new TowerRange(0, 0, hitAreaTextureBad,
-				getVertexBufferObjectManager(), range);
+		towerRangeGood = new TowerRange(0, 0,
+				ResourceManager.getInstance().hitAreaGoodTexture,
+				getVertexBufferObjectManager(), range * 2);
+		towerRangeBad = new TowerRange(0, 0,
+				ResourceManager.getInstance().hitAreaBadTexture,
+				getVertexBufferObjectManager(), range * 2);
 		towerRangeGood.setPosition(
 				this.getWidth() / 2 - towerRangeGood.getWidth() / 2,
 				this.getHeight() / 2 - towerRangeGood.getHeight() / 2);
 		towerRangeBad.setPosition(
 				this.getWidth() / 2 - towerRangeBad.getWidth() / 2,
 				this.getHeight() / 2 - towerRangeBad.getHeight() / 2);
-		arrayTower = pArrayTower;
+
 		this.setZIndex(zIndex); // used to determine the order stuff is drawn in
 		total++;
 	}
@@ -135,58 +160,44 @@ public class Tower extends Sprite {
 	 *            location of projectile
 	 * @return boolean True if tower fired (created bullet sprite), else false
 	 */
-	public boolean fire(Enemy target, Tower source, Scene scene,
+	public boolean fire(Enemy target, GameScene scene,
 			ArrayList<Enemy> arrayEn, BaseGameActivity myContext) {
-		// TODO move bullet to mouth of cannon
-		long elapsed = System.currentTimeMillis() - lastFire;
-		// only fire if tower is off cool down
-		if (elapsed > cooldown * cdMod && !moveable) { // not on cooldown, and
-														// not actively being
-														// placed
-			SpriteBullet = new Projectile(source.getMidX(), source.getMidY(),
-					10f, 10f, bulletTexture, getVertexBufferObjectManager(), scene); // READY?!?
-			SpriteBullet.setTarget(this, target); // AIM...
-			SpriteBullet.shoot(arrayEn, myContext); // FIIIIIRE!!!!
-			arrayBullets.add(SpriteBullet);
-			lastFire = System.currentTimeMillis();
-			// TODO check sound settings
-			ResourceManager.getInstance().fireSound.play();
-			Sprite myBullet = this.getLastBulletSprite();
-			scene.attachChild(myBullet);
-			return true;
-		} else
-			return false;
-	}
-
-	/**
-	 * Called by TowerTest to make the Tower fire a bullet at the Enemy Note, it
-	 * just calls fire(enemy, this, scene, arrayEn, myContext)
-	 * 
-	 * @param enemy
-	 *            to be fired at
-	 * @param scene
-	 *            to attach bullet to
-	 * @param arrayEn
-	 *            used if the Enemy dies
-	 * @param myContext
-	 *            used for threading in the Projectile
-	 */
-	public void fire(Enemy enemy, GameScene scene, ArrayList<Enemy> arrayEn,
-			BaseGameActivity myContext) {
 		if (!scene.isPaused) {
-//			try {
-				// call fire from the tower
-				if (enemy.getHealth() > enemy.inboundDamage) {
-					// No overkill
-					this.fire(enemy, this, scene, arrayEn, myContext);
-					// Asks the tower to open fire and places the bullet in
-					// middle
-					// of tower
+			if (target.getHealth() > target.inboundDamage) {
+				long elapsed = System.currentTimeMillis() - lastFire;
+				// only fire if tower is off cool down
+				if (elapsed > cooldown * cdMod && !moveable) { // not on
+																// cooldown,
+																// and
+																// not actively
+																// being
+																// placed
+					spriteBullet = new Projectile(this.getMidX(),
+							this.getMidY(), 10f, 10f, getBulletTexture(),
+							getVertexBufferObjectManager(), scene); // READY?!?
+					spriteBullet.setSpeed(bulletSpeed);
+					spriteBullet.setTarget(this, target); // AIM...
+					spriteBullet.shoot(arrayEn, myContext); // FIIIIIRE!!!!
+					arrayBullets.add(spriteBullet);
+					lastFire = System.currentTimeMillis();
+					// TODO check sound settings
+					ResourceManager.getInstance().fireSound.play();
+					Sprite myBullet = this.getLastBulletSprite();
+					scene.attachChild(myBullet);
+
+					setCurrentTileIndex(6);
+					
+					long delay = (long) (cooldown / 6.1);
+					long[] ANIMATE = {delay, delay, delay, delay, delay, delay };
+					animate(ANIMATE, false);
+					Log.d("Tower", "Playing animation");
+					return true;
+				} else {
+					return false;
 				}
-//			} catch (Exception e) {
-//				Log.e("Error", "Cannot fire. Check this");
-//			}
+			}
 		}
+		return false;
 	}
 
 	/**
@@ -196,6 +207,22 @@ public class Tower extends Sprite {
 	 */
 	public long getCD() {
 		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setCredits(long credits) {
+		this.credits = credits;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public void setMaxLevel(int maxLevel) {
+		this.maxLevel = maxLevel;
 	}
 
 	/**
@@ -226,7 +253,7 @@ public class Tower extends Sprite {
 	 */
 
 	public Sprite getLastBulletSprite() {
-		return SpriteBullet; // our main class uses this to attach to the scene
+		return spriteBullet; // our main class uses this to attach to the scene
 	}
 
 	public ArrayList<Projectile> getArrayList() {
@@ -273,6 +300,14 @@ public class Tower extends Sprite {
 		return total;
 	}
 
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
 	/**
 	 * Sell tower, return credit value
 	 * 
@@ -289,18 +324,17 @@ public class Tower extends Sprite {
 	 * @param tower
 	 * @param resetTile
 	 */
-	public void remove(final Tower tower, final boolean resetTile,
-			final GameScene scene) {
+	public void remove(final boolean resetTile, final GameScene scene) {
 		ResourceManager.getInstance().engine.runOnUpdateThread(new Runnable() {
 			@Override
 			public void run() {
-				scene.unregisterTouchArea(tower);
+				scene.unregisterTouchArea(Tower.this);
 				// scene.detachChild(tower);
-				tower.detachSelf();
-				arrayTower.remove(tower);
+				Tower.this.detachSelf();
+				scene.getArrayTower().remove(Tower.this);
 				if (resetTile) {
-					Log.e("Tower",
-							"removed " + tower.getCol() + "," + tower.getRow());
+					Log.e("Tower", "removed " + Tower.this.getCol() + ","
+							+ Tower.this.getRow());
 				}
 			}
 		});
@@ -310,22 +344,24 @@ public class Tower extends Sprite {
 							// change paths :-\
 			try {
 				scene.getTmxLayer()
-						.getTMXTileAt(tower.getX(), tower.getY())
+						.getTMXTileAt(getX(), getY())
 						.setGlobalTileID(scene.getTmxTiledMap(),
-								GameActivity.TILEID_CLEAR);
+								ResourceManager.TILEID_UNPATHABLE);
 				Path path;
 				// first go through and update all the enemies in the ArrayList
 				for (Enemy en : scene.getArrayEn()) {
-					path = new Path(en, scene.getCurrentLevel().getMap().getEndLoc()[0],
-							scene.getTmxLayer(), scene.getCurrentLevel().getMap());
+					path = new Path(en, scene.getCurrentLevel().getMap()
+							.getEndLoc()[0], scene.getTmxLayer(), scene
+							.getCurrentLevel().getMap());
 					en.path = path;
 					en.stop();
 					en.startMoving();
 				}
 				// now don't forget to update the enemyClone!
 				for (Enemy en : scene.getEnemyClone()) {
-					path = new Path(en, scene.getCurrentLevel().getMap().getEndLoc()[0],
-							scene.getTmxLayer(), scene.getCurrentLevel().getMap());
+					path = new Path(en, scene.getCurrentLevel().getMap()
+							.getEndLoc()[0], scene.getTmxLayer(), scene
+							.getCurrentLevel().getMap());
 					en.path = path;
 				}
 			} catch (NullPointerException e) {
@@ -333,16 +369,6 @@ public class Tower extends Sprite {
 				// tile
 			}
 		}
-	}
-
-	/**
-	 * Removes this tower from scene and array, and updates counter
-	 * 
-	 * @param resetTile
-	 *            true if you want the tile set to traversable
-	 */
-	public void remove(boolean resetTile, GameScene scene) {
-		remove(this, resetTile, scene);
 	}
 
 	/**
@@ -390,10 +416,17 @@ public class Tower extends Sprite {
 			// newX = tmxTile.getTileX();
 			// newY = tmxTile.getTileY();
 			this.setPosition(newX, newY);
-			final TMXProperties<TMXTileProperty> tmxTileProperties = scene
-					.getTmxTiledMap().getTMXTileProperties(
-							tmxTile.getGlobalTileID());
-			if (tmxTileProperties.containsTMXProperty("Collidable", "False")) {
+
+			TMXProperties<TMXTileProperty> properties = tmxTile
+					.getTMXTileProperties(ResourceManager.getInstance().tmxTiledMap);
+
+			if (properties != null
+					&& (properties.containsTMXProperty(
+							GameScene.TAG_TILED_PROPERTY_NAME_PATH,
+							GameScene.TAG_TILED_PROPERTY_VALUE_TRUE) || properties
+							.containsTMXProperty(
+									GameScene.TAG_TILED_PROPERTY_NAME_BUILDABLE,
+									GameScene.TAG_TILED_PROPERTY_VALUE_FALSE))) {
 				// set the circle to red (it has an error)
 				this.setTowerPlaceError(scene, true);
 				// Log.e("Jared","CAN NOT PLACE ON CACTI "+newX+","+newY);
@@ -443,8 +476,9 @@ public class Tower extends Sprite {
 		final TMXTile tmxTile = scene.getTmxLayer().getTMXTileAt(newX, newY);
 		if (tmxTile != null) {
 			int backupTileID = tmxTile.getGlobalTileID();
+
 			tmxTile.setGlobalTileID(scene.getTmxTiledMap(),
-					GameActivity.TILEID_BLOCKED);
+					ResourceManager.TILEID_BLOCKED);
 			// crazy loop action
 			boolean towerNotAllowed = false;
 			Path[] tempPaths = new Path[scene.getArrayEn().size()
@@ -463,10 +497,10 @@ public class Tower extends Sprite {
 								Utils.getColFromX(newX),
 								Utils.getRowFromY(newY))) {
 							// only then, should we check pathfinding!
-							tempPaths[i] = new Path(enemy,
-									scene.getCurrentLevel().getMap().getEndLoc()[0],
-									scene.getTmxLayer(),
-									scene.getCurrentLevel().getMap());
+							tempPaths[i] = new Path(enemy, scene
+									.getCurrentLevel().getMap().getEndLoc()[0],
+									scene.getTmxLayer(), scene
+											.getCurrentLevel().getMap());
 							if (tempPaths[i].rcPath == null) {
 								// they can't put it here!
 								towerNotAllowed = true;
@@ -491,10 +525,11 @@ public class Tower extends Sprite {
 								Utils.getColFromX(newX),
 								Utils.getColFromX(newY))) {
 							tempPaths[scene.getArrayEn().size() + i] = new Path(
-									scene.getEnemyClone()[i],
-									scene.getCurrentLevel().getMap().getEndLoc()[0],
-									scene.getTmxLayer(),
-									scene.getCurrentLevel().getMap());
+									scene.getEnemyClone()[i], scene
+											.getCurrentLevel().getMap()
+											.getEndLoc()[0],
+									scene.getTmxLayer(), scene
+											.getCurrentLevel().getMap());
 							if (tempPaths[scene.getArrayEn().size() + i].rcPath == null) {
 								// they can't put it here!
 								towerNotAllowed = true;
@@ -529,8 +564,8 @@ public class Tower extends Sprite {
 					}
 					for (int i = 0; i < scene.getEnemyClone().length; i++) {
 						if (needsNewPath[scene.getArrayEn().size() + i]) {
-							scene.getEnemyClone()[i].path = tempPaths[scene.getArrayEn()
-									.size() + i];
+							scene.getEnemyClone()[i].path = tempPaths[scene
+									.getArrayEn().size() + i];
 						}
 					}
 					return true;
@@ -700,5 +735,13 @@ public class Tower extends Sprite {
 	 */
 	public int getRow() {
 		return Utils.getRowFromY(this.getY());
+	}
+
+	public String getDamageType() {
+		return damageType;
+	}
+
+	public void setDamageType(String damageType) {
+		this.damageType = damageType;
 	}
 }
