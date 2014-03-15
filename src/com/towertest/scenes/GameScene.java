@@ -73,8 +73,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	private Text creditText;
 	private Text livesText;
-	private Rectangle creditMask;
-	private Rectangle livesMask;
 	private long credits;
 	private long lives;
 	private final long initialCredits = 3000;
@@ -234,7 +232,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		currentLevel = new Level(waves, map);
 
 		camera.setHUD(hud);
-		hud.attachChild(waveProgress);
 
 		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
 		setColMax(tmxLayer.getTileColumns() - 1 + 1);
@@ -292,23 +289,25 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		setOnSceneTouchListener(this);
 
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
-		
+
 		// number of enemies remaining
-				waveProgress = new ProgressBar(20, 70, 100, 10,
-						currentLevel.getWaves().length, 0, vbom);
+		waveProgress = new ProgressBar(20, 70, 100, 10,
+				currentLevel.getWaves().length, 0, vbom);
 
-				waveProgress.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
-						.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
-						.setBackColor(0.0f, 0.0f, 0.0f, 0.2f);
+		waveProgress.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
+				.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
+				.setBackColor(0.0f, 0.0f, 0.0f, 0.2f);
 
-				waveProgress.setProgress(0);
-		
+		waveProgress.setProgress(0);
+
+		hud.attachChild(waveProgress);
+
 		fpsText = new Text(camera.getWidth() - 100, 20,
 				ResourceManager.getInstance().font20, "FPS:",
 				"FPS: xxx.xx".length(), ResourceManager.getInstance().vbom);
 		creditText = new Text(20, 20, ResourceManager.getInstance().font40,
 				"$", 12, ResourceManager.getInstance().vbom);
-		
+
 		livesText = new Text(20, 40 + creditText.getHeight()
 				+ waveProgress.getHeight(),
 				ResourceManager.getInstance().font40, "", 12,
@@ -319,10 +318,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		lives = initialLives;
 		subtractLives(0); // initialize the value
-		
+
 		Rectangle infoArea = new Rectangle(0, 0, camera.getWidth(), 100, vbom);
 		infoArea.setColor(Color.BLUE);
-		
+
 		// A tower button to build other towers xcoord,ycoord,xsize,ysize
 		prototypeTowers = new ArrayList<Tower>();
 
@@ -380,37 +379,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	// Methods
 	// ===========================================================
 
-	/**
-	 * Makes rectangles
-	 * 
-	 * @param pX
-	 *            x coord
-	 * @param pY
-	 *            y coord
-	 * @param pWidth
-	 *            width
-	 * @param pHeight
-	 *            height
-	 * @param pRed
-	 *            color value
-	 * @param pGreen
-	 *            color value
-	 * @param pBlue
-	 *            color value
-	 * @param pAlpha
-	 *            color Alpha value
-	 * @return
-	 */
-	private Rectangle makeColoredRectangle(final float pX, final float pY,
-			final float pWidth, final float pHeight, final float pRed,
-			final float pGreen, final float pBlue, final float pAlpha) {
-
-		final Rectangle coloredRect = new Rectangle(pX, pY, pHeight, pWidth,
-				ResourceManager.getInstance().vbom);
-		coloredRect.setColor(pRed, pGreen, pBlue, pAlpha);
-		return coloredRect;
-	}
-
 	public void togglePauseGame() {
 		setPaused(!isPaused);
 		pauseButton.setCurrentTileIndex(isPaused ? 1 : 0);
@@ -420,7 +388,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	public void addCredits(long enCredits) {
 		setCredits(getCredits() + enCredits);
 		creditText.setText("$" + getCredits());
-		creditMask.setWidth(creditText.getWidth());
 		// update screen to reflect new score
 	}
 
@@ -432,7 +399,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			lives = 0;
 		}
 		livesText.setText(lives + " lives");
-		livesMask.setWidth(livesText.getWidth());
 	}
 
 	private void collision() {
