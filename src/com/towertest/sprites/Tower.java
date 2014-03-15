@@ -466,7 +466,6 @@ public class Tower extends AnimatedSprite {
 	 * @param newX
 	 * @param newY
 	 * @param assignPaths
-	 * @param myContext
 	 * @param tw
 	 * @return
 	 */

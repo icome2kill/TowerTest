@@ -23,6 +23,7 @@ public class Wave {
 	private Enemy[] enemies;
 	private int count;
 	private int index;
+	private int currentEnemyCount;
 	
 	private float delay; // Delay between enemy spawn
 	// ===========================================================
@@ -37,6 +38,7 @@ public class Wave {
 		
 		index = 0;
 		count = 0;
+		currentEnemyCount = 0;
 	}
 
 	// ===========================================================
@@ -72,7 +74,12 @@ public class Wave {
 			count = 0;
 			index++;
 		}
+		currentEnemyCount++;
 		return enemy;
+	}
+	
+	public int getCurrentEnemyCount() {
+		return currentEnemyCount;
 	}
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces

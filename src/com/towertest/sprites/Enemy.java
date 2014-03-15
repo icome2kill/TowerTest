@@ -70,7 +70,7 @@ public class Enemy extends AnimatedSprite {
 			VertexBufferObjectManager tvbom, GameMap map) {
 		super(pX, pY, pWidth, pHeight, iTextureRegion, tvbom);
 		this.health = health;
-		healthBar = new ProgressBar(0, -10, GameScene.TILE_WIDTH, 10, health,
+		healthBar = new ProgressBar(0, 0, GameScene.TILE_WIDTH, 10, health,
 				health, tvbom);
 		healthBar.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
 				.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
@@ -141,6 +141,10 @@ public class Enemy extends AnimatedSprite {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public void setCredits(int credits) {
+		this.credits = credits;
 	}
 
 	/**
@@ -236,6 +240,8 @@ public class Enemy extends AnimatedSprite {
 				getVertexBufferObjectManager());
 		returnEnemy.health = this.health;
 		returnEnemy.speed = this.speed;
+		returnEnemy.credits = this.credits;
+		returnEnemy.score = this.score;
 		returnEnemy.path = path.clone(returnEnemy);
 		returnEnemy.healthBar = healthBar.clone(returnEnemy);
 		return returnEnemy;

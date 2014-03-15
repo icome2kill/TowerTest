@@ -1,6 +1,5 @@
 package com.towertest.scenes;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.andengine.engine.camera.hud.HUD;
@@ -14,7 +13,6 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.text.Text;
-import org.andengine.entity.util.FPSCounter;
 import org.andengine.extension.tmx.TMXLayer;
 import org.andengine.extension.tmx.TMXTiledMap;
 import org.andengine.input.touch.TouchEvent;
@@ -26,7 +24,7 @@ import com.towertest.BuildTowerTouchHandler;
 import com.towertest.Utils;
 import com.towertest.builders.EnemyBuilder;
 import com.towertest.builders.TowerBuilder;
-import com.towertest.hud.ProgressBar;
+import com.towertest.hud.GameOverWindow;
 import com.towertest.logic.GameMap;
 import com.towertest.logic.Level;
 import com.towertest.logic.Wave;
@@ -56,9 +54,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	// Fields
 	// ===========================================================
 	private HUD hud;
-	private Text fpsText;
 
-	private ProgressBar waveProgress;
 	private TMXLayer tmxLayer;
 
 	private Waypoint lStarts[];
@@ -66,35 +62,35 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private Wave[] waves;
 
 	private Level currentLevel;
-	private int rowMax;
-	private int colMax;
-
-	private FPSCounter fpsCounter;
 
 	private Text creditText;
 	private Text livesText;
+	private Text waveText;
+	private Text scoreText;
+	private Text enemyCountText;
+
 	private long credits;
 	private long lives;
+	private long scores;
+
 	private final long initialCredits = 3000;
 	private final long initialLives = 30;
 
 	private ButtonSprite pauseButton;
 
 	private ArrayList<Tower> arrayTower;
-	private ArrayList<Enemy> arrayEn;
-
 	private ArrayList<Tower> prototypeTowers;
+
+	private ArrayList<Enemy> arrayEn;
 	private Enemy[] enemyClone;
 
 	private TMXTiledMap tmxTiledMap;
 
-	private boolean allowDiagonal;
-
-	private IUpdateHandler hudLoop;
-
 	private IUpdateHandler loop;
 
 	private GameMap map;
+
+	private GameOverWindow gameOverWindow;
 
 	// ===========================================================
 	// Constructors
@@ -125,22 +121,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	public void setEnemyClone(Enemy[] enemyClone) {
 		this.enemyClone = enemyClone;
-	}
-
-	public int getColMax() {
-		return colMax;
-	}
-
-	public void setColMax(int pColMax) {
-		this.colMax = pColMax;
-	}
-
-	public int getRowMax() {
-		return rowMax;
-	}
-
-	public void setRowMax(int pRowMax) {
-		this.rowMax = pRowMax;
 	}
 
 	public Level getCurrentLevel() {
@@ -175,20 +155,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		this.arrayEn = arrayEn;
 	}
 
-	public boolean isAllowDiagonal() {
-		return allowDiagonal;
-	}
-
-	public void setAllowDiagonal(boolean allowDiagonal) {
-		this.allowDiagonal = allowDiagonal;
-	}
-
 	public ArrayList<Tower> getArrayTower() {
 		return arrayTower;
 	}
 
 	public void setArrayTower(ArrayList<Tower> arrayTower) {
 		this.arrayTower = arrayTower;
+	}
+
+	public long getScores() {
+		return scores;
+	}
+
+	public void addScores(long scores) {
+		this.scores += scores;
+		scoreText.setText("Score: " + this.scores);
 	}
 
 	// ===========================================================
@@ -234,17 +215,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		camera.setHUD(hud);
 
 		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
-		setColMax(tmxLayer.getTileColumns() - 1 + 1);
-		setRowMax(tmxLayer.getTileRows() - 1 + 1);
 		// tmxTileProperty =
 		// this.mTMXTiledMap.getTMXTilePropertiesByGlobalTileID(0));
 		attachChild(tmxLayer);
 
-		fpsCounter = new FPSCounter();
-		engine.registerUpdateHandler(fpsCounter);
-
 		// Pause button
-		pauseButton = new ButtonSprite(camera.getWidth() - 180, 20,
+		pauseButton = new ButtonSprite(0, camera.getHeight() - 40,
 				ResourceManager.getInstance().texPause,
 				ResourceManager.getInstance().texPlay, vbom,
 				new OnClickListener() {
@@ -255,28 +231,27 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					}
 				});
 
+		pauseButton.setWidth(40f);
+		pauseButton.setHeight(40f);
+
 		hud.attachChild(pauseButton);
 		hud.registerTouchArea(pauseButton);
-
-		hudLoop = new IUpdateHandler() {
-			@Override
-			public void reset() {
-			}
-
-			@Override
-			public void onUpdate(float pSecondsElapsed) {
-				// =================HUD LOOP=======================
-				fpsText.setText("FPS: "
-						+ new DecimalFormat("#.##").format(fpsCounter.getFPS()));
-				// code ends
-			}
-		};
-		registerUpdateHandler(hudLoop);
 
 		loop = new IUpdateHandler() {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
-				collision();
+				for (Enemy enemy : arrayEn) {
+					for (Tower tower : arrayTower) {// iterate
+						// TODO, add physics for collision
+						if (tower.distanceTo(enemy) < tower.maxRange()) {
+							tower.fire(enemy, GameScene.this, arrayEn, activity);
+						}
+					}
+				}
+				if (currentLevel.getCurrentEnemyCount() == currentLevel.getTotalEnemies() && arrayEn.size() == 0) {
+					gameOverWindow.showResult(GameScene.this, camera, true);
+					GameScene.this.unregisterUpdateHandler(this);
+				}
 			}
 
 			@Override
@@ -290,28 +265,28 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
 
-		// number of enemies remaining
-		waveProgress = new ProgressBar(20, 70, 100, 10,
-				currentLevel.getWaves().length, 0, vbom);
+		creditText = new Text(20, 0, ResourceManager.getInstance().font20,
+				"$ 0123456789", "$ 0123456789".length(), vbom);
 
-		waveProgress.setProgressColor(1.0f, 0.0f, 0.0f, 1.0f)
-				.setFrameColor(0.4f, 0.4f, 0.4f, 1.0f)
-				.setBackColor(0.0f, 0.0f, 0.0f, 0.2f);
+		livesText = new Text(200, 0, ResourceManager.getInstance().font20,
+				"Lives 0123456789", "Lives 0123456789".length(), vbom);
 
-		waveProgress.setProgress(0);
+		waveText = new Text(300, 0, ResourceManager.getInstance().font20,
+				"Wave 1234567890", "Wave 1234567890".length(), vbom);
 
-		hud.attachChild(waveProgress);
+		scoreText = new Text(650, 0, ResourceManager.getInstance().font20,
+				"Scores: 0123456789", "Score: 0123456789".length(), vbom);
 
-		fpsText = new Text(camera.getWidth() - 100, 20,
-				ResourceManager.getInstance().font20, "FPS:",
-				"FPS: xxx.xx".length(), ResourceManager.getInstance().vbom);
-		creditText = new Text(20, 20, ResourceManager.getInstance().font40,
-				"$", 12, ResourceManager.getInstance().vbom);
+		enemyCountText = new Text(300, 25,
+				ResourceManager.getInstance().font20, "Enemy: 0123456789",
+				"Enemy: 0123456789".length(), vbom);
 
-		livesText = new Text(20, 40 + creditText.getHeight()
-				+ waveProgress.getHeight(),
-				ResourceManager.getInstance().font40, "", 12,
-				ResourceManager.getInstance().vbom);
+		enemyCountText.setText("Enemy: 0/" + waves[0].getTotal());
+
+		waveText.setText("Wave 1/" + waves.length);
+
+		scores = 0;
+		addScores(0);
 
 		credits = initialCredits;
 		addCredits(0); // initialize the value
@@ -319,8 +294,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		lives = initialLives;
 		subtractLives(0); // initialize the value
 
-		Rectangle infoArea = new Rectangle(0, 0, camera.getWidth(), 100, vbom);
+		Rectangle infoArea = new Rectangle(0, 0, camera.getWidth(), 40, vbom);
 		infoArea.setColor(Color.BLUE);
+		infoArea.attachChild(creditText);
+		infoArea.attachChild(livesText);
+		infoArea.attachChild(waveText);
+		infoArea.attachChild(scoreText);
+		infoArea.attachChild(enemyCountText);
+
+		hud.attachChild(infoArea);
 
 		// A tower button to build other towers xcoord,ycoord,xsize,ysize
 		prototypeTowers = new ArrayList<Tower>();
@@ -329,7 +311,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		Rectangle prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
 				56, camera.getHeight(), vbom);
-		prototypeTowerArea.setColor(Color.BLUE);
+		prototypeTowerArea.setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
 
 		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3).build());
 		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(5).build());
@@ -343,17 +325,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		// allows you to drag it
 		final BuildTowerTouchHandler btth = new BuildTowerTouchHandler(
-				prototypeTowers, this, getCredits(), getArrayTower(),
-				ResourceManager.getInstance().hitAreaGoodTexture,
-				ResourceManager.getInstance().hitAreaBadTexture,
-				ResourceManager.getInstance().bulletTexture,
-				ResourceManager.getInstance().towerTexture, currentLevel,
-				getArrayEn(), ResourceManager.getInstance().activity,
-				ResourceManager.getInstance().vbom);
+				prototypeTowers, this, arrayTower);
 
 		hud.setOnAreaTouchListener(btth);
 
-		Log.d("GameScene", "Starting waves");
+		gameOverWindow = new GameOverWindow(vbom);
+
 		startWaves();
 	}
 
@@ -373,6 +350,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		hud = null;
 		camera.setHUD(null);
 		engine.unregisterUpdateHandler(enemyHandler);
+		unregisterUpdateHandler(loop);
 	}
 
 	// ===========================================================
@@ -399,32 +377,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			lives = 0;
 		}
 		livesText.setText(lives + " lives");
-	}
-
-	private void collision() {
-		// Lets Loop our array of enemies
-		// ***************************************************************
-		// TODO WE SHOULD PROBABLY MULTITHREAD THIS LOOP FO' SHIZZLE!!!!!!
-		// ***************************************************************
-		if (getArrayEn().size() > 0) {
-			for (int j = 0; j < getArrayEn().size(); j++) {// iterate through
-															// the
-															// enemies
-				final Enemy enemy = getArrayEn().get(j);
-				// Lets Loop our Towers
-				for (int k = 0; k < getArrayTower().size(); k++) {// iterate
-																	// through
-																	// the
-																	// towers
-					final Tower tower = getArrayTower().get(k);
-					// check if they are in range of the tower
-					// TODO, add physics for collision
-					if (tower.distanceTo(enemy) < tower.maxRange()) {
-						tower.fire(enemy, this, getArrayEn(), activity);
-					}
-				}
-			}
-		}
 	}
 
 	// break this all out to a wave class, also use SpriteBatch
@@ -456,8 +408,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 									engine.unregisterUpdateHandler(enemyHandler);
 								}
 							}
-							waveProgress.setProgress(currentLevel
-									.getCurrentWaveNumber());
+							waveText.setText("Wave "
+									+ currentLevel.getCurrentWaveNumber() + "/"
+									+ currentLevel.getWaves().length);
+							enemyCountText.setText("Enemy "
+									+ wave.getCurrentEnemyCount() + "/"
+									+ wave.getTotal());
 						}
 					}
 				});
@@ -502,6 +458,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		if (!isPaused) {
 			togglePauseGame();
 			// Toast.makeText(getBaseContext(), "LOSER!", Toast.LENGTH_LONG);
+			gameOverWindow.showResult(this, camera, false);
 			Log.e("LOSER!", "Wrong Wrong Wrong, fingerpistols, you LOSE!");
 		}
 	}

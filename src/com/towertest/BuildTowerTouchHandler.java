@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import org.andengine.entity.scene.IOnAreaTouchListener;
 import org.andengine.entity.scene.ITouchArea;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import android.util.Log;
 
-import com.towertest.logic.Level;
 import com.towertest.managers.ResourceManager;
 import com.towertest.scenes.GameScene;
-import com.towertest.sprites.Enemy;
 import com.towertest.sprites.Tower;
 
 /**
@@ -45,17 +41,12 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	boolean showHitArea;
 	boolean currentlyDragging = false;
 	public static Tower tw;
-	GameScene scene;
-	Level level;
+	
+	private GameScene scene;
 	// Scene hud;
 	// float touchX, touchY;
 	ArrayList<? extends Tower> buildTower; // List of prototype towers
 	ArrayList<Tower> arrayTower;
-	ITextureRegion bulletTexture;
-	ITextureRegion towerTexture;
-	ITextureRegion hitAreaTextureGood;
-	ITextureRegion hitAreaTextureBad;
-	ArrayList<Enemy> arrayEn;
 	BaseGameActivity myContext;
 
 	/**
@@ -81,22 +72,11 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	 *            TextureRegion for tower
 	 */
 	public BuildTowerTouchHandler(ArrayList<? extends Tower> bt,
-			GameScene scene, long creds, ArrayList<Tower> al,
-			ITextureRegion hagtex, ITextureRegion habtex, ITextureRegion btex,
-			ITextureRegion ttex, Level pLevel, ArrayList<Enemy> pArrayEn,
-			BaseGameActivity pMyContext, VertexBufferObjectManager vbom) { // Scene
+			GameScene scene, ArrayList<Tower> al) { // Scene
 																			// h,
 		this.scene = scene;
 		buildTower = bt;
 		arrayTower = al;
-		bulletTexture = btex;
-		towerTexture = ttex;
-		hitAreaTextureGood = hagtex;
-		hitAreaTextureBad = habtex;
-		level = pLevel;
-		arrayEn = pArrayEn;
-		myContext = pMyContext;
-
 	}
 
 	@Override

@@ -18,6 +18,7 @@ public class EnemyBuilder {
 	private int health;
 	private ITiledTextureRegion texture;
 	private int score;
+	private int credit; // Credit for killing an enemy
 	
 	private float x;
 	private float y;
@@ -34,6 +35,8 @@ public class EnemyBuilder {
 		y = 0;
 		speed = 50f;
 		health = 500;
+		score = 10;
+		credit = score;
 		texture = ResourceManager.getInstance().enemyTexture;
 	}
 	// ===========================================================
@@ -69,6 +72,11 @@ public class EnemyBuilder {
 		this.score = score;
 		return this;
 	}
+	
+	public EnemyBuilder setCredit(int credit) {
+		this.credit = credit;
+		return this;
+	}
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -81,6 +89,7 @@ public class EnemyBuilder {
 		Enemy enemy = new Enemy(x, y, GameScene.TILE_WIDTH, GameScene.TILE_HEIGHT, health, texture, ResourceManager.getInstance().vbom, scene.getMap());
 		enemy.speed = speed;
 		enemy.setScore(score);
+		enemy.setCredits(credit);
 		return enemy;
 	}
 	

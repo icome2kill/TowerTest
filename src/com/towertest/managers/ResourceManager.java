@@ -213,14 +213,14 @@ public class ResourceManager {
 	}
 
 	private void loadMainMenuGraphics() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
 		mainMenuTextureAtlas = new BuildableBitmapTextureAtlas(
 				activity.getTextureManager(), 1024, 1024);
 
 		btnPlayTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(mainMenuTextureAtlas, activity, "play.png");
 		btnOptionsTexture = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(mainMenuTextureAtlas, activity, "pause.png");
+				.createFromAsset(mainMenuTextureAtlas, activity, "options.png");
 
 		try {
 			mainMenuTextureAtlas

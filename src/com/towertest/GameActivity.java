@@ -98,7 +98,7 @@ public class GameActivity extends SimpleBaseGameActivity {
 		final DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		camera = new Camera(0, -40, CAMERA_WIDTH, CAMERA_HEIGHT);
+		camera = new Camera(0, -50, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		final EngineOptions mEngine = new EngineOptions(true,
 				ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(

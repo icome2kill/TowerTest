@@ -10,6 +10,7 @@ import org.andengine.util.color.Color;
 
 import android.util.Log;
 
+import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
 import com.towertest.managers.SceneManager.SceneType;
 
@@ -86,6 +87,9 @@ public class MainMenuScene extends BaseScene implements
 
 	@Override
 	public void onBackPressed() {
+		disposeScene();
+		ResourceManager.getInstance().unloadMainMenuResources();
+		ResourceManager.getInstance().unloadFonts();
 		System.exit(0);
 	}
 

@@ -136,6 +136,7 @@ public class Projectile extends Sprite {
 					if (target.isAlive) { // this prevents getting multiple credits for one kill!
 						target.isAlive = false;
 						((GameScene) scene).addCredits(target.getCredits());
+						((GameScene) scene).addScores(target.getScore());
 					}
 					myContext.getEngine().runOnUpdateThread(new Runnable() {
 						@Override
@@ -144,7 +145,6 @@ public class Projectile extends Sprite {
 						}
 					});
 					arrayEn.remove(target); 
-					// TODO play death animation enemy function pass scene to
 				}
 			}
 		});
