@@ -8,28 +8,69 @@
 package biz.abits.towertest;
 
 public final class R {
+    public static final class anim {
+        public static final int appear_down=0x7f040000;
+        public static final int appear_up=0x7f040001;
+        public static final int blink=0x7f040002;
+        public static final int bounce=0x7f040003;
+        public static final int fade_in=0x7f040004;
+        public static final int fade_out=0x7f040005;
+        public static final int flip=0x7f040006;
+        public static final int gone_down=0x7f040007;
+        public static final int gone_up=0x7f040008;
+        public static final int move=0x7f040009;
+        public static final int rotate=0x7f04000a;
+        public static final int sequential=0x7f04000b;
+        public static final int slide_down=0x7f04000c;
+        public static final int slide_in_left=0x7f04000d;
+        public static final int slide_in_right=0x7f04000e;
+        public static final int slide_out_left=0x7f04000f;
+        public static final int slide_out_right=0x7f040010;
+        public static final int slide_up=0x7f040011;
+        public static final int slide_up_r=0x7f040012;
+        public static final int together=0x7f040013;
+        public static final int zoom_in=0x7f040014;
+        public static final int zoom_out=0x7f040015;
+    }
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_action_search=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
+        public static final int bg=0x7f020000;
+        public static final int grass=0x7f020001;
+        public static final int human=0x7f020002;
+        public static final int ic_action_search=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int nature=0x7f020005;
+        public static final int optionbtn=0x7f020006;
+        public static final int playbtn=0x7f020007;
+        public static final int title=0x7f020008;
+        public static final int tree=0x7f020009;
     }
     public static final class id {
-        public static final int menu_settings=0x7f070000;
+        public static final int RelativeLayout1=0x7f080000;
+        public static final int grass=0x7f080002;
+        public static final int human=0x7f080003;
+        public static final int menu_settings=0x7f080008;
+        public static final int nature=0x7f080004;
+        public static final int option=0x7f080007;
+        public static final int play=0x7f080006;
+        public static final int title=0x7f080005;
+        public static final int tree=0x7f080001;
     }
     public static final class layout {
         public static final int activity_tower_test=0x7f030000;
+        public static final int main_layout=0x7f030001;
     }
     public static final class menu {
-        public static final int activity_tower_test=0x7f060000;
+        public static final int activity_tower_test=0x7f070000;
     }
     public static final class string {
-        public static final int app_name=0x7f040000;
-        public static final int hello_world=0x7f040001;
-        public static final int menu_settings=0x7f040002;
-        public static final int title_activity_tower_test=0x7f040003;
+        public static final int app_name=0x7f050000;
+        public static final int hello_world=0x7f050001;
+        public static final int menu_settings=0x7f050002;
+        public static final int title_activity_tower_test=0x7f050003;
     }
     public static final class style {
-        public static final int AppTheme=0x7f050000;
+        public static final int AppTheme=0x7f060000;
     }
 }

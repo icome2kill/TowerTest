@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="13" height="7" tilewidth="96" tileheight="96">
+<map version="1.0" orientation="orthogonal" width="13" height="7" tilewidth="56" tileheight="56">
  <tileset firstgid="1" name="grass_area" tilewidth="96" tileheight="96">
   <image source="gfx/grass_area.png" width="384" height="288"/>
-  <tile id="3">
-   <properties>
-    <property name="Path" value="False"/>
-   </properties>
-  </tile>
-  <tile id="5">
-   <properties>
-    <property name="Path" value="True"/>
-   </properties>
-  </tile>
-  <tile id="7">
+  <tile id="99">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
-   </properties>
-  </tile>
-  <tile id="11">
-   <properties>
-    <property name="Path" value="False"/>
-   </properties>
-  </tile>
- </tileset>
- <layer name="Tile Layer 1" width="13" height="7">
+  </properties>
+</tile>
+<tile id="3">
+ <properties>
+  <property name="Path" value="False"/>
+</properties>
+</tile>
+<tile id="5">
+ <properties>
+  <property name="Path" value="True"/>
+</properties>
+</tile>
+<tile id="7">
+ <properties>
+  <property name="Buildable" value="False"/>
+  <property name="Path" value="False"/>
+</properties>
+</tile>
+<tile id="11">
+ <properties>
+  <property name="Path" value="False"/>
+</properties>
+</tile>
+</tileset>
+<layer name="Tile Layer 1" width="13" height="7">
   <data>
    <tile gid="6"/>
    <tile gid="6"/>
@@ -117,6 +123,6 @@
    <tile gid="4"/>
    <tile gid="8"/>
    <tile gid="4"/>
-  </data>
- </layer>
+ </data>
+</layer>
 </map>

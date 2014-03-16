@@ -84,7 +84,7 @@ public class SceneManager {
 		gameScene = new GameScene();
 		setScene(gameScene);
 	}
-
+	
 	public void loadMainMenuScene() {
 		disposeCurrentScene();
 		ResourceManager.getInstance().loadMainMenuResources();

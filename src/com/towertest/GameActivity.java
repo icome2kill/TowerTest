@@ -12,6 +12,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
+import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -101,8 +102,7 @@ public class GameActivity extends SimpleBaseGameActivity {
 		camera = new Camera(0, -50, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		final EngineOptions mEngine = new EngineOptions(true,
-				ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(
-						800, 480), camera);
+				ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
 
 		if (MultiTouch.isSupported(this)) {
 			if (MultiTouch.isSupportedDistinct(this))
@@ -154,111 +154,6 @@ public class GameActivity extends SimpleBaseGameActivity {
 	@Override
 	public void onBackPressed() {
 		SceneManager.getInstance().getCurrentScene().onBackPressed();
-	}
-
-	
-//	@Override
-//	public boolean dispatchKeyEvent(KeyEvent event) {
-//		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
-
-	// =====================================
-	// Pinch Zoom and Scroll stuff
-	// =====================================
-	// TODO establish limits
-	// static float currentZoom = 1;
-
-	/**
-	 * Translates x coordinate from hud coordinates to scene coordinates (used
-	 * for tower placement)
-	 * 
-	 * @param x
-	 *            X coordinate to be translated
-	 * @return translated X coordinate
-	 */
-
-	// public static float getZoom() {
-	// return camera.getZoomFactor();
-	// }
-	//
-	// private void scenePan(float pDistanceX, float pDistanceY) {
-	// final float zoomFactor = TowerTest.camera.getZoomFactor();
-	// TowerTest.camera.offsetCenter((-pDistanceX) / zoomFactor -
-	// currentXoffset, (-pDistanceY) / zoomFactor - currentYoffset);
-	// currentXoffset = 0;
-	// currentYoffset = 0;
-	// // Log.e("ScenePan", "currentXoffset:"+currentXoffset);
-	// // Log.e("ScenePan", "currentYoffset:"+currentYoffset);
-	//
-	// // Log.e("ScenePan", "pDistanceX:"+pDistanceX);
-	// // Log.e("ScenePan", "pDistanceY:"+pDistanceY);
-	//
-	// }
-
-	// @Override
-	// public void onScrollStarted(final ScrollDetector pScollDetector, final
-	// int pPointerID, final float pDistanceX, final float pDistanceY) {
-	// scenePan(pDistanceX, pDistanceY);
-	// }
-	//
-	// @Override
-	// public void onScroll(final ScrollDetector pScollDetector, final int
-	// pPointerID, final float pDistanceX, final float pDistanceY) {
-	// scenePan(pDistanceX, pDistanceY);
-	// }
-	//
-	// @Override
-	// public void onScrollFinished(final ScrollDetector pScollDetector, final
-	// int pPointerID, final float pDistanceX, final float pDistanceY) {
-	// scenePan(pDistanceX, pDistanceY);
-	// }
-	//
-	// @Override
-	// public void onPinchZoomStarted(final PinchZoomDetector
-	// pPinchZoomDetector, final TouchEvent pTouchEvent) {
-	// final float zoomFactor = TowerTest.camera.getZoomFactor();
-	// mPinchZoomStartedCameraZoomFactor = zoomFactor;
-	// currentXoffset = 0;
-	// currentYoffset = 0;
-	// }
-	//
-	// @Override
-	// public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final
-	// TouchEvent pTouchEvent, final float pZoomFactor) {
-	// TowerTest.camera.setZoomFactor(Math.min(Math.max(TowerTest.MIN_ZOOM,
-	// mPinchZoomStartedCameraZoomFactor * pZoomFactor), TowerTest.MAX_ZOOM));
-	//
-	// }
-	//
-	// @Override
-	// public void onPinchZoomFinished(final PinchZoomDetector
-	// pPinchZoomDetector, final TouchEvent pTouchEvent, final float
-	// pZoomFactor) {
-	// TowerTest.camera.setZoomFactor(Math.min(Math.max(TowerTest.MIN_ZOOM,
-	// mPinchZoomStartedCameraZoomFactor * pZoomFactor), TowerTest.MAX_ZOOM));
-	// }
-
-	/*
-	 * @Override protected void onResume() { super.onResume(); if(this.mEngine
-	 * != null && !this.mEngine.isRunning()){ this.mEngine.start(); } }
-	 * 
-	 * @Override protected void onPause() { super.onPause(); if(this.mEngine !=
-	 * null && this.mEngine.isRunning()){ this.mEngine.stop(); } };
-	 */
-
-	public static TextureRegion loadSprite(TextureManager tm, Context c,
-			String strtex) {
-		TextureRegion tr;
-		BitmapTextureAtlas towerImage;
-		towerImage = new BitmapTextureAtlas(tm, 512, 512);
-		tr = BitmapTextureAtlasTextureRegionFactory.createFromAsset(towerImage,
-				c, strtex, 0, 0);
-		tm.loadTexture(towerImage);
-		return tr;
 	}
 
 	// END OF CLASS

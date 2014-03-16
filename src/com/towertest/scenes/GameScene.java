@@ -27,13 +27,13 @@ import com.towertest.Utils;
 import com.towertest.builders.EnemyBuilder;
 import com.towertest.builders.TowerBuilder;
 import com.towertest.hud.GameOverWindow;
+import com.towertest.hud.GamePausedWindow;
 import com.towertest.hud.TowerDetailsWindow;
 import com.towertest.logic.GameMap;
 import com.towertest.logic.Level;
 import com.towertest.logic.Wave;
 import com.towertest.logic.Waypoint;
 import com.towertest.managers.ResourceManager;
-import com.towertest.managers.SceneManager;
 import com.towertest.managers.SceneManager.SceneType;
 import com.towertest.sprites.Enemy;
 import com.towertest.sprites.Tower;
@@ -90,13 +90,18 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private TMXTiledMap tmxTiledMap;
 
 	private IUpdateHandler loop;
+	private TimerHandler enemyHandler;
 
 	private GameMap map;
 
 	private GameOverWindow gameOverWindow;
 	private TowerDetailsWindow towerDetailsWindow;
+	private GamePausedWindow gamePausedWindow;
 
 	private BuildTowerTouchHandler btth;
+	
+	private Rectangle infoArea;
+	private Rectangle prototypeTowerArea;
 
 	// ===========================================================
 	// Constructors
@@ -185,8 +190,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	public void createScene() {
 		setBackground(new Background(Color.BLUE));
 
-		tmxTiledMap = ResourceManager.getInstance().tmxTiledMap;
-		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
+		loadMap(1);
 
 		hud = new HUD();
 
@@ -206,8 +210,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
 					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
 					.setHealth(500 * (i + 1))
-					.setTexture(ResourceManager.getInstance().enemyTexture[i])
-					.setSpeed(60f).build();
+					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
+					.build();
 
 			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer,
 					getArrayEn());
@@ -220,15 +224,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		camera.setHUD(hud);
 
-		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
-		// tmxTileProperty =
-		// this.mTMXTiledMap.getTMXTilePropertiesByGlobalTileID(0));
-		attachChild(tmxLayer);
-
 		// Pause button
 		pauseButton = new ButtonSprite(0, camera.getHeight() - 40,
-				ResourceManager.getInstance().texPause,
-				ResourceManager.getInstance().texPlay, vbom,
+				resourceManager.texPause, resourceManager.texPlay, vbom,
 				new OnClickListener() {
 					@Override
 					public void onClick(ButtonSprite pButtonSprite,
@@ -248,7 +246,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			public void onUpdate(float pSecondsElapsed) {
 				for (Enemy enemy : arrayEn) {
 					for (Tower tower : arrayTower) {// iterate
-						// TODO, add physics for collision
 						if (tower.distanceTo(enemy) < tower.maxRange()) {
 							tower.fire(enemy, GameScene.this, arrayEn, activity);
 						}
@@ -266,25 +263,24 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		registerUpdateHandler(loop);
-//		setTouchAreaBindingOnActionDownEnabled(true);
+		// setTouchAreaBindingOnActionDownEnabled(true);
 		setOnSceneTouchListener(this);
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
 
-		creditText = new Text(20, 0, ResourceManager.getInstance().font20,
-				"$ 0123456789", "$ 0123456789".length(), vbom);
+		creditText = new Text(20, 0, resourceManager.font20, "$ 0123456789",
+				"$ 0123456789".length(), vbom);
 
-		livesText = new Text(200, 0, ResourceManager.getInstance().font20,
+		livesText = new Text(200, 0, resourceManager.font20,
 				"Lives 0123456789", "Lives 0123456789".length(), vbom);
 
-		waveText = new Text(300, 0, ResourceManager.getInstance().font20,
-				"Wave 1234567890", "Wave 1234567890".length(), vbom);
+		waveText = new Text(300, 0, resourceManager.font20, "Wave 1234567890",
+				"Wave 1234567890".length(), vbom);
 
-		scoreText = new Text(650, 0, ResourceManager.getInstance().font20,
+		scoreText = new Text(650, 0, resourceManager.font20,
 				"Scores: 0123456789", "Score: 0123456789".length(), vbom);
 
-		enemyCountText = new Text(300, 25,
-				ResourceManager.getInstance().font20, "Enemy: 0123456789",
-				"Enemy: 0123456789".length(), vbom);
+		enemyCountText = new Text(300, 25, resourceManager.font20,
+				"Enemy: 0123456789", "Enemy: 0123456789".length(), vbom);
 
 		enemyCountText.setText("Enemy: 0/" + waves[0].getTotal());
 
@@ -299,7 +295,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		lives = initialLives;
 		subtractLives(0); // initialize the value
 
-		Rectangle infoArea = new Rectangle(0, 0, camera.getWidth(), 40, vbom);
+		infoArea = new Rectangle(0, 0, camera.getWidth(), 40, vbom);
 		infoArea.setColor(Color.BLUE);
 		infoArea.attachChild(creditText);
 		infoArea.attachChild(livesText);
@@ -314,21 +310,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		TowerBuilder towerBuilder = new TowerBuilder(this);
 
-		Rectangle prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
+		prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
 				56, camera.getHeight(), vbom);
 		prototypeTowerArea.setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
-		
+
 		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3)
-				.setTowerTexture(ResourceManager.getInstance().towerTexture[0])
-				.build());
+				.setTowerTexture(resourceManager.towerTexture[0]).build());
 		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(5)
-				.setTowerTexture(ResourceManager.getInstance().towerTexture[1])
-				.build());
+				.setTowerTexture(resourceManager.towerTexture[1]).build());
 
 		for (final Tower tower : prototypeTowers) {
 			prototypeTowerArea.attachChild(tower);
 			tower.setOnAreaTouchedListener(new IOnAreaTouchListener() {
-				
+
 				@Override
 				public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
 						ITouchArea pTouchArea, float pTouchAreaLocalX,
@@ -337,25 +331,31 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					return false;
 				}
 			});
-			hud.registerTouchArea(tower);
 		}
-
+		hud.registerTouchArea(prototypeTowerArea);
 		hud.attachChild(prototypeTowerArea);
 
 		// allows you to drag it
 		btth = new BuildTowerTouchHandler(prototypeTowers, this, arrayTower);
-
 		hud.setOnAreaTouchListener(btth);
 
 		gameOverWindow = new GameOverWindow(vbom);
 		towerDetailsWindow = new TowerDetailsWindow(vbom);
+		gamePausedWindow = new GamePausedWindow(vbom);
 
 		startWaves();
 	}
 
+	private void loadMap(int number) {
+		resourceManager.tmxTiledMap = resourceManager.tmxTiledMapArray[number];
+		tmxTiledMap = resourceManager.tmxTiledMap;
+		tmxLayer = tmxTiledMap.getTMXLayers().get(0);
+		attachChild(tmxLayer);
+	}
+
 	@Override
 	public void onBackPressed() {
-		SceneManager.getInstance().loadMainMenuScene();
+
 	}
 
 	@Override
@@ -368,8 +368,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		hud.detachSelf();
 		hud = null;
 		camera.setHUD(null);
-		engine.unregisterUpdateHandler(enemyHandler);
-		unregisterUpdateHandler(loop);
+		engine.clearUpdateHandlers();
+		clearChildScene();
+		clearEntityModifiers();
+		clearTouchAreas();
+		clearUpdateHandlers();
 	}
 
 	// ===========================================================
@@ -377,9 +380,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	// ===========================================================
 
 	public void togglePauseGame() {
-		setPaused(!isPaused);
+		isPaused = !isPaused;
 		pauseButton.setCurrentTileIndex(isPaused ? 1 : 0);
-		setPaused(isPaused);
+		if (isPaused) {
+			hud.clearTouchAreas();
+			gamePausedWindow.show(this, camera);
+		} else {
+			hud.clearTouchAreas();
+			hud.registerTouchArea(prototypeTowerArea);
+			gamePausedWindow.detachSelf();
+		}
+		hud.registerTouchArea(pauseButton);
 	}
 
 	public void addCredits(long enCredits) {
@@ -397,9 +408,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		}
 		livesText.setText(lives + " lives");
 	}
-
-	// break this all out to a wave class, also use SpriteBatch
-	TimerHandler enemyHandler;
 
 	public void startWaves() {
 		enemyHandler = new TimerHandler(
@@ -484,11 +492,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		if (isPaused) {
+			return true;
+		}
 		float x = pSceneTouchEvent.getX();
 		float y = pSceneTouchEvent.getY();
 		if (BuildTowerTouchHandler.tw != null) {
 			BuildTowerTouchHandler.tw.detachSelf();// this ensures that bad
-			// towers get removed
 			BuildTowerTouchHandler.tw = null;
 		}
 		if (towerDetailsWindow != null && !towerDetailsWindow.contains(x, y)) {
