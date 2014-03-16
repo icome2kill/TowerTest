@@ -2,12 +2,14 @@ package com.towertest.sprites;
 
 import java.util.ArrayList;
 
+import org.andengine.entity.scene.IOnAreaTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.tmx.TMXProperties;
 import org.andengine.extension.tmx.TMXTile;
 import org.andengine.extension.tmx.TMXTileProperty;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TextureRegion;
@@ -42,6 +44,12 @@ public class Tower extends AnimatedSprite {
 	private int level = 1; // level of tower
 	private int maxLevel = 10; // level of tower
 	private float bulletSpeed;
+	
+	private IOnAreaTouchListener onAreaTouchedListener;
+
+	public void setOnAreaTouchedListener(IOnAreaTouchListener onAreaTouchedListener) {
+		this.onAreaTouchedListener = onAreaTouchedListener;
+	}
 
 	public float getBulletSpeed() {
 		return bulletSpeed;
@@ -63,7 +71,7 @@ public class Tower extends AnimatedSprite {
 	public int getRange() {
 		return range;
 	}
-
+	
 	public ITextureRegion getBulletTexture() {
 		return bulletTexture;
 	}
@@ -676,6 +684,18 @@ public class Tower extends AnimatedSprite {
 		}
 		hitAreaShown = showHitArea;
 	}
+	
+	@Override
+	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+		if (onAreaTouchedListener != null) {
+			return onAreaTouchedListener.onAreaTouched(pSceneTouchEvent, this, pTouchAreaLocalX, pTouchAreaLocalY);			
+		}
+		return super
+				.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
+	}
+
+
 
 	/** tells us if the tower can be placed where it is */
 	public boolean hasPlaceError() {

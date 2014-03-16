@@ -37,7 +37,7 @@ public class EnemyBuilder {
 		health = 500;
 		score = 10;
 		credit = score;
-		texture = ResourceManager.getInstance().enemyTexture;
+		texture = ResourceManager.getInstance().enemyTexture[0];
 	}
 	// ===========================================================
 	// Getter & Setter

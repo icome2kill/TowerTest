@@ -7,7 +7,9 @@ import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.IOnAreaTouchListener;
 import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.ButtonSprite;
@@ -25,6 +27,7 @@ import com.towertest.Utils;
 import com.towertest.builders.EnemyBuilder;
 import com.towertest.builders.TowerBuilder;
 import com.towertest.hud.GameOverWindow;
+import com.towertest.hud.TowerDetailsWindow;
 import com.towertest.logic.GameMap;
 import com.towertest.logic.Level;
 import com.towertest.logic.Wave;
@@ -82,7 +85,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private ArrayList<Tower> prototypeTowers;
 
 	private ArrayList<Enemy> arrayEn;
-	private Enemy[] enemyClone;
+	private Enemy[] enemyPrototype;
 
 	private TMXTiledMap tmxTiledMap;
 
@@ -91,6 +94,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private GameMap map;
 
 	private GameOverWindow gameOverWindow;
+	private TowerDetailsWindow towerDetailsWindow;
+
+	private BuildTowerTouchHandler btth;
 
 	// ===========================================================
 	// Constructors
@@ -116,11 +122,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 
 	public Enemy[] getEnemyClone() {
-		return enemyClone;
+		return enemyPrototype;
 	}
 
 	public void setEnemyClone(Enemy[] enemyClone) {
-		this.enemyClone = enemyClone;
+		this.enemyPrototype = enemyClone;
 	}
 
 	public Level getCurrentLevel() {
@@ -189,27 +195,27 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		map = new GameMap(lStarts, lEnds);
 
-		enemyClone = new Enemy[lStarts.length];
+		enemyPrototype = new Enemy[ResourceManager.ENEMY_RESOURCES.length];
 		arrayEn = new ArrayList<Enemy>();
 		arrayTower = new ArrayList<Tower>();
 
 		EnemyBuilder enBuilder = new EnemyBuilder(this);
 
-		for (int i = 0; i < enemyClone.length; i++) {
-			enemyClone[i] = enBuilder
-					.setX(Utils.getXFromCol(map.getStartLoc()[i].x))
-					.setY(Utils.getXFromCol(map.getStartLoc()[i].y))
-					.setHealth(1000)
-					.setTexture(ResourceManager.getInstance().enemyTexture)
+		for (int i = 0; i < enemyPrototype.length; i++) {
+			enemyPrototype[i] = enBuilder
+					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
+					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
+					.setHealth(500 * (i + 1))
+					.setTexture(ResourceManager.getInstance().enemyTexture[i])
 					.setSpeed(60f).build();
 
-			enemyClone[i]
-					.createPath(lEnds[0], activity, tmxLayer, getArrayEn());
+			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer,
+					getArrayEn());
 		}
 
 		waves = new Wave[] {
-				new Wave(new int[] { 2 }, new Enemy[] { enemyClone[0] }, 2f),
-				new Wave(new int[] { 3 }, new Enemy[] { enemyClone[0] }, 2f) };
+				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
+				new Wave(new int[] { 3 }, new Enemy[] { enemyPrototype[2] }, 1f) };
 		currentLevel = new Level(waves, map);
 
 		camera.setHUD(hud);
@@ -248,7 +254,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						}
 					}
 				}
-				if (currentLevel.getCurrentEnemyCount() == currentLevel.getTotalEnemies() && arrayEn.size() == 0) {
+				if (currentLevel.getCurrentEnemyCount() == currentLevel
+						.getTotalEnemies() && arrayEn.size() == 0) {
 					gameOverWindow.showResult(GameScene.this, camera, true);
 					GameScene.this.unregisterUpdateHandler(this);
 				}
@@ -259,10 +266,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			}
 		};
 		registerUpdateHandler(loop);
-
-		setTouchAreaBindingOnActionDownEnabled(true);
+//		setTouchAreaBindingOnActionDownEnabled(true);
 		setOnSceneTouchListener(this);
-
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
 
 		creditText = new Text(20, 0, ResourceManager.getInstance().font20,
@@ -312,24 +317,38 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		Rectangle prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
 				56, camera.getHeight(), vbom);
 		prototypeTowerArea.setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
+		
+		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3)
+				.setTowerTexture(ResourceManager.getInstance().towerTexture[0])
+				.build());
+		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(5)
+				.setTowerTexture(ResourceManager.getInstance().towerTexture[1])
+				.build());
 
-		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3).build());
-		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(5).build());
-
-		for (Tower tower : prototypeTowers) {
+		for (final Tower tower : prototypeTowers) {
 			prototypeTowerArea.attachChild(tower);
+			tower.setOnAreaTouchedListener(new IOnAreaTouchListener() {
+				
+				@Override
+				public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+						ITouchArea pTouchArea, float pTouchAreaLocalX,
+						float pTouchAreaLocalY) {
+					showTowerDetails(tower, false);
+					return false;
+				}
+			});
 			hud.registerTouchArea(tower);
 		}
 
 		hud.attachChild(prototypeTowerArea);
 
 		// allows you to drag it
-		final BuildTowerTouchHandler btth = new BuildTowerTouchHandler(
-				prototypeTowers, this, arrayTower);
+		btth = new BuildTowerTouchHandler(prototypeTowers, this, arrayTower);
 
 		hud.setOnAreaTouchListener(btth);
 
 		gameOverWindow = new GameOverWindow(vbom);
+		towerDetailsWindow = new TowerDetailsWindow(vbom);
 
 		startWaves();
 	}
@@ -421,11 +440,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 
 	public float sceneTransX(float x) {
-		// final float myZoom = camera.getZoomFactor();
-		// final float myXOffset = camera.getCenterX() - TowerTest.CAMERA_WIDTH
-		// / 2 / myZoom;
-		// final float newX = x / myZoom + myXOffset;
-		// return newX;
 		return x + camera.getCenterX() - camera.getWidth() / 2;
 	}
 
@@ -438,12 +452,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	 * @return translated Y coordinate
 	 */
 	public float sceneTransY(float y) {
-		// final float myZoom = camera.getZoomFactor();
-		// final float myYOffset = camera.getCenterY() - TowerTest.CAMERA_HEIGHT
-		// / 2 / myZoom;
-		// final float newY = y / myZoom + myYOffset;
-		// return newY;
 		return y + camera.getCenterY() - camera.getHeight() / 2;
+	}
+
+	public void showTowerDetails(Tower tower, boolean showRange) {
+		towerDetailsWindow.detachSelf();
+		towerDetailsWindow.show(this, camera, tower, showRange);
 	}
 
 	public float getPanX() {
@@ -459,6 +473,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 			togglePauseGame();
 			// Toast.makeText(getBaseContext(), "LOSER!", Toast.LENGTH_LONG);
 			gameOverWindow.showResult(this, camera, false);
+			engine.unregisterUpdateHandler(loop);
 			Log.e("LOSER!", "Wrong Wrong Wrong, fingerpistols, you LOSE!");
 		}
 	}
@@ -469,10 +484,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		float x = pSceneTouchEvent.getX();
+		float y = pSceneTouchEvent.getY();
 		if (BuildTowerTouchHandler.tw != null) {
 			BuildTowerTouchHandler.tw.detachSelf();// this ensures that bad
 			// towers get removed
 			BuildTowerTouchHandler.tw = null;
+		}
+		if (towerDetailsWindow != null && !towerDetailsWindow.contains(x, y)) {
+			towerDetailsWindow.detachSelf();
 		}
 		return true;
 	}

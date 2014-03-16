@@ -33,9 +33,7 @@ import android.util.Log;
 
 import com.towertest.GameActivity;
 import com.towertest.scenes.GameScene;
-import com.towertest.sprites.Enemy;
 import com.towertest.sprites.Projectile;
-import com.towertest.sprites.Tower;
 
 public class ResourceManager {
 	// ===========================================================
@@ -46,6 +44,9 @@ public class ResourceManager {
 	public static int TILEID_BLOCKED = 100; // BLock is both not pathable nor buildable
 	public static int TILEID_PATH = 1;
 	public static int TILEID_UNPATHABLE = 1;
+	
+	public static final String[] ENEMY_RESOURCES = { "cavalier.png", "fighter.png", "knight.png", "warrior.png" };
+	public static final String[] TOWER_RESOURCES = { "cavalier.png", "warrior.png" };
 
 	// ===========================================================
 	// Fields
@@ -56,14 +57,15 @@ public class ResourceManager {
 	public GameActivity activity;
 
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
-	public ITiledTextureRegion towerTexture;
-	public ITiledTextureRegion enemyTexture;
+	public ITiledTextureRegion[] towerTexture;
+	public ITiledTextureRegion[] enemyTexture;
 	public ITextureRegion bulletTexture;
 	public ITextureRegion hitAreaGoodTexture;
 	public ITextureRegion hitAreaBadTexture;
 	public ITextureRegion texPause;
 	public ITextureRegion texPlay;
 	public TMXTiledMap tmxTiledMap;
+	public ITextureRegion towerRemoveButtonTexture;
 	public Sound fireSound;
 
 	private BuildableBitmapTextureAtlas mainMenuTextureAtlas;
@@ -127,8 +129,12 @@ public class ResourceManager {
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(
 				activity.getTextureManager(), 1024, 1024);
 
-		towerTexture = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
-				gameTextureAtlas, activity, Tower.texture, 6, 2);
+		towerTexture = new ITiledTextureRegion[TOWER_RESOURCES.length];
+		
+		for (int i = 0; i < towerTexture.length; i++) {
+			towerTexture[i] = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+				gameTextureAtlas, activity, TOWER_RESOURCES[i], 6, 1);
+		}
 		bulletTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, Projectile.texture);
 		hitAreaGoodTexture = BitmapTextureAtlasTextureRegionFactory
@@ -137,9 +143,17 @@ public class ResourceManager {
 		hitAreaBadTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity,
 						"towerRangeBad.png");
-		enemyTexture = BitmapTextureAtlasTextureRegionFactory
+		
+		enemyTexture = new ITiledTextureRegion[ENEMY_RESOURCES.length];
+		
+		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
+			enemyTexture[i] = BitmapTextureAtlasTextureRegionFactory
 				.createTiledFromAsset(gameTextureAtlas, activity,
-						Enemy.TEXTURE, 6, 1);
+						ENEMY_RESOURCES[i], 6, 1);
+		}
+		
+		towerRemoveButtonTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
+				gameTextureAtlas, activity, "towerRemoveButton.png");
 		
 		texPause = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "pause.png");

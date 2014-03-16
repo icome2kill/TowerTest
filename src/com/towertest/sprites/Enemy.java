@@ -165,12 +165,10 @@ public class Enemy extends AnimatedSprite {
 	}
 
 	public void startMoving() {
-		Log.d("Enemy", "Starting Moving");
 		if (path != null) {
 			// convert our type of path we have to their type of path
 			final org.andengine.entity.modifier.PathModifier.Path tempPath = path
 					.getEntityPath();
-			Log.d("Enemy", "Started Moving");
 			if (tempPath != null) {
 				// now find the total length of the path
 				final float dist = tempPath.getLength();

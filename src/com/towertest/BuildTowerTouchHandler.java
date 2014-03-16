@@ -11,7 +11,7 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 import android.util.Log;
 
-import com.towertest.managers.ResourceManager;
+import com.towertest.builders.TowerBuilder;
 import com.towertest.scenes.GameScene;
 import com.towertest.sprites.Tower;
 
@@ -41,7 +41,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	boolean showHitArea;
 	boolean currentlyDragging = false;
 	public static Tower tw;
-	
+
 	private GameScene scene;
 	// Scene hud;
 	// float touchX, touchY;
@@ -73,7 +73,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	 */
 	public BuildTowerTouchHandler(ArrayList<? extends Tower> bt,
 			GameScene scene, ArrayList<Tower> al) { // Scene
-																			// h,
+													// h,
 		this.scene = scene;
 		buildTower = bt;
 		arrayTower = al;
@@ -83,13 +83,11 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
 			final ITouchArea pTouchArea, final float pTouchAreaLocalX,
 			final float pTouchAreaLocalY) {
-		// touchDuration = event.getEventTime() - event.getDownTime();
+
 		if (pSceneTouchEvent.isActionUp()) {
 			if (tw != null) {
 				// TODO the problem is, "isActionUp" NEVER gets called!
-				tw.setHitAreaShown(scene, false); // note: we MUST hide the hit
-													// area BEFORE setting
-													// moveable to false!
+				tw.setHitAreaShown(scene, false);
 				tw.moveable = false;
 				if (tw.hasPlaceError() || scene.getCredits() < tw.getCredits()) {
 					// refund credits and remove tower, because they can't place
@@ -131,30 +129,57 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 								.getY() + startingOffsetY)
 								- buildableTower.getYHandleOffset();
 
-						tw = new Tower(newX, newY, buildableTower.getBulletTexture(), buildableTower.getTowerTexture(), GameScene.TILE_WIDTH,
-								GameScene.TILE_HEIGHT, scene,
-								ResourceManager.getInstance().vbom,
-								buildableTower.getRange()) {
+						final Tower tower = new TowerBuilder(scene)
+								.setX(newX)
+								.setY(newY)
+								.setDamage(buildableTower.getDamage())
+								.setCooldown(buildableTower.getCD())
+								.setCredit(buildableTower.getCredits())
+								.setMaxlevel(buildableTower.getMaxLevel())
+								.setRange(buildableTower.getRange())
+								.setTowerTexture(buildableTower.getTowerTexture())
+								.setBulletSpeed(buildableTower.getBulletSpeed())
+								.setBulletTexture(
+										buildableTower.getBulletTexture())
+								.build();
+						tower.setOnAreaTouchedListener(new IOnAreaTouchListener() {
 							@Override
-							public boolean onAreaTouched(
-									TouchEvent pSceneTouchEvent,
-									float pTouchAreaLocalX,
+							public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+									ITouchArea pTouchArea, float pTouchAreaLocalX,
 									float pTouchAreaLocalY) {
-								return towerTouchEvent(pSceneTouchEvent, this);
+								return towerTouchEvent(pSceneTouchEvent, tower);
 							}
-						};
+						});
+//
+//						tw = new Tower(newX, newY,
+//								buildableTower.getBulletTexture(),
+//								buildableTower.getTowerTexture(),
+//								GameScene.TILE_WIDTH, GameScene.TILE_HEIGHT,
+//								scene, ResourceManager.getInstance().vbom,
+//								buildableTower.getRange()) {
+//							@Override
+//							public boolean onAreaTouched(
+//									TouchEvent pSceneTouchEvent,
+//									float pTouchAreaLocalX,
+//									float pTouchAreaLocalY) {
+//								return towerTouchEvent(pSceneTouchEvent, this);
+//							}
+//						};
+//
+//						tw.setDamage(buildableTower.getDamage());
+//						tw.setCooldown(buildableTower.getCD());
+//						tw.setCredits(buildableTower.getCredits());
+//						tw.setMaxLevel(buildableTower.getMaxLevel());
+//						tw.setBulletSpeed(buildableTower.getBulletSpeed());
 
-						tw.setDamage(buildableTower.getDamage());
-						tw.setCooldown(buildableTower.getCD());
-						tw.setCredits(buildableTower.getCredits());
-						tw.setMaxLevel(buildableTower.getMaxLevel());
-						tw.setBulletSpeed(buildableTower.getBulletSpeed());
-
-						tw.checkClearSpotAndPlace(scene, newX, newY);
-						tw.setHitAreaShown(scene, true);
-						arrayTower.add(tw); // add to array
-						scene.registerTouchArea(tw);  
-						scene.attachChild(tw); // add it to the scene
+						tower.checkClearSpotAndPlace(scene, newX, newY);
+						tower.setHitAreaShown(scene, true);
+						arrayTower.add(tower); // add to array
+						scene.registerTouchArea(tower);
+						scene.attachChild(tower); // add it to the scene
+						
+						tw = tower;
+						
 						break;
 					}
 				}
@@ -176,7 +201,9 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 	private boolean towerTouchEvent(TouchEvent pSceneTouchEvent, Tower thisTower) {
 		// TODO add code for upgrades, better make a separate class for it,
 		// perhaps contained within the Tower class
+		
 		if (pSceneTouchEvent.isActionDown()) {
+			Log.d("Building Tower", "Tower touch event down");
 			if (!currentlyDragging) {
 				lastX = pSceneTouchEvent.getX();
 				lastY = pSceneTouchEvent.getY();
@@ -193,6 +220,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 				return true;
 			}
 		} else if (pSceneTouchEvent.isActionMove()) {
+			Log.d("Building Tower", "Tower touch event move");
 			// distTraveled += Math.sqrt((Math.pow(lastX -
 			// pSceneTouchEvent.getX(), 2)) + (Math.pow(lastY -
 			// pSceneTouchEvent.getY(), 2))) * TowerTest.camera.getZoomFactor();
@@ -209,10 +237,6 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 			} else {
 				if (showHitArea) { // that means it's the first time we've ran
 									// this, so..
-					// pSceneTouchEvent.obtain(firstTouchEvent.getX(),
-					// firstTouchEvent.getY(), firstTouchEvent.getAction(),
-					// firstTouchEvent.getPointerID(),
-					// firstTouchEvent.getMotionEvent());
 					startingOffsetX = firstX - lastX;
 					startingOffsetY = firstY - lastY;
 					GameActivity.currentXoffset = lastX - firstX;
@@ -224,8 +248,9 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 		} else if (pSceneTouchEvent.isActionUp()) {
 			GameActivity.currentXoffset = 0;
 			GameActivity.currentYoffset = 0;
+
+			scene.showTowerDetails(thisTower, true);
 			if (showHitArea) {
-				thisTower.remove(true, scene);
 				// this.setHitAreaShown(scene, !this.getHitAreaShown()); //
 				// toggle hit area circle
 				// TODO I have this temporarily disabled so we can quickly tap

@@ -6,6 +6,7 @@ import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.util.color.Color;
 
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
@@ -29,14 +30,14 @@ public class GameOverWindow extends Rectangle {
 	// Constructors
 	// ===========================================================
 	public GameOverWindow(VertexBufferObjectManager vbom) {
-		super(0, 0, 650, 400, vbom);
+		super(0, 0, 800, 480, vbom);
 
-		statusText = new Text(300, 150, ResourceManager.getInstance().font40,
+		statusText = new Text(200, 150, ResourceManager.getInstance().font40,
 				"You lose! won", vbom);
-		scoreText = new Text(300, 200, ResourceManager.getInstance().font40,
+		scoreText = new Text(200, 200, ResourceManager.getInstance().font40,
 				"0123456789", vbom);
 
-		retryButton = new ButtonSprite(0, 350,
+		retryButton = new ButtonSprite(0, 250,
 				ResourceManager.getInstance().btnPlayTexture, vbom,
 				new OnClickListener() {
 
@@ -47,7 +48,7 @@ public class GameOverWindow extends Rectangle {
 						SceneManager.getInstance().loadGameScene(ResourceManager.getInstance().engine);
 					}
 				});
-		quitButton = new ButtonSprite(300, 350,
+		quitButton = new ButtonSprite(400, 250,
 				ResourceManager.getInstance().btnOptionsTexture, vbom,
 				new OnClickListener() {
 
@@ -58,6 +59,8 @@ public class GameOverWindow extends Rectangle {
 						SceneManager.getInstance().loadMainMenuScene();
 					}
 				});
+		
+		setColor(new Color(.8f, .8f, .8f, .8f));
 
 		attachChild(statusText);
 		attachChild(scoreText);
@@ -86,9 +89,10 @@ public class GameOverWindow extends Rectangle {
 		scoreText.setText("Score: " + scene.getScores());
 		setPosition((camera.getWidth() - getWidth()) / 2, 0);
 		
-		camera.getHUD().setVisible(false);
 		camera.getHUD().registerTouchArea(quitButton);
 		camera.getHUD().registerTouchArea(retryButton);
+		
+		scene.clearTouchAreas();
 		
 		scene.attachChild(this);
 	}

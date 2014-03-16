@@ -33,7 +33,7 @@
 			</properties>
 		</tile>
 	</tileset>
-	<layer name="Tile Layer 1" width="14" height="7">
+	<layer name="Tile Layer 1" width="20" height="10">
 		<data>
 			<tile gid="12"/>
 			<tile gid="12"/>

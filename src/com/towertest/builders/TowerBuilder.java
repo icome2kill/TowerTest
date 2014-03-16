@@ -1,8 +1,8 @@
 package com.towertest.builders;
 
+import org.andengine.entity.scene.IOnAreaTouchListener;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
-import org.andengine.opengl.texture.region.TextureRegion;
 
 import com.towertest.managers.ResourceManager;
 import com.towertest.scenes.GameScene;
@@ -35,6 +35,8 @@ public class TowerBuilder {
 	private ITiledTextureRegion towerTexture;
 
 	private GameScene scene;
+	
+	private IOnAreaTouchListener onAreaTouchListener;
 
 	// ===========================================================
 	// Constructors
@@ -53,7 +55,7 @@ public class TowerBuilder {
 		bulletSpeed = 100f;
 
 		bulletTexture = ResourceManager.getInstance().bulletTexture;
-		towerTexture = ResourceManager.getInstance().towerTexture;
+		towerTexture = ResourceManager.getInstance().towerTexture[0];
 	}
 
 	// ===========================================================
@@ -99,18 +101,23 @@ public class TowerBuilder {
 		return this;
 	}
 
-	public TowerBuilder setBulletTexture(TextureRegion texture) {
+	public TowerBuilder setBulletTexture(ITextureRegion texture) {
 		this.bulletTexture = texture;
 		return this;
 	}
 
-	public TowerBuilder setBulletSpeed(int speed) {
+	public TowerBuilder setBulletSpeed(float speed) {
 		this.bulletSpeed = speed;
 		return this;
 	}
 
 	public TowerBuilder setTowerTexture(ITiledTextureRegion texture) {
 		this.towerTexture = texture;
+		return this;
+	}
+	
+	public TowerBuilder setOnAreaTouchedListner(IOnAreaTouchListener onAreaTouchListener) {
+		this.onAreaTouchListener = onAreaTouchListener;
 		return this;
 	}
 
@@ -125,6 +132,7 @@ public class TowerBuilder {
 		tower.setMaxLevel(maxLevel);
 		tower.setDamageType(damageType);
 		tower.setBulletSpeed(bulletSpeed);
+		tower.setOnAreaTouchedListener(onAreaTouchListener);
 		return tower;
 	}
 	// ===========================================================
