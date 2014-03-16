@@ -69,13 +69,13 @@ IOnMenuItemClickListener {
 				ResourceManager.getInstance().treeTexture, vbom));
 
 		// Nature and human sprites
-		final Sprite natureSprite = new Sprite(0, 0, (int) (167 * 1.5), 480,
+		final Sprite natureSprite = new Sprite(-500, -500, (int) (167 * 1.5), 480,
 				ResourceManager.getInstance().natureTexture, vbom);
-		final Sprite humanSprite = new Sprite(0, 0, (int) (167 * 1.5), 480,
+		final Sprite humanSprite = new Sprite(-500, -500, (int) (167 * 1.5), 480,
 				ResourceManager.getInstance().humanTexture, vbom);
 
 		// Title Sprites
-		final Sprite titleSprite = new Sprite(300, 100, ResourceManager.getInstance().titleTexture, vbom);
+		final Sprite titleSprite = new Sprite(300, 70, ResourceManager.getInstance().titleTexture, vbom);
 
 		// Button
 		final IMenuItem btnPlay = new ScaleMenuItemDecorator(
@@ -86,13 +86,13 @@ IOnMenuItemClickListener {
 				new SpriteMenuItem(MENU_OPT, resourceManager.btnOptionsTexture,
 						vbom), 1.1f, 1);
 		
+		btnPlay.setPosition(-500, -500);
+		btnOption.setPosition(-500, -500);
+		
 		// Grass Sprite
-		final Sprite grassSprite = new Sprite(0, 480 - 161 * 800 / 512, 800, 161 * 800 / 512, ResourceManager.getInstance().grassTexture, vbom);
+		final Sprite grassSprite = new Sprite(-500, -500, 800, 161 * 800 / 512, ResourceManager.getInstance().grassTexture, vbom);
 
-		btnPlay.setPosition(camera.getWidth() / 2 - btnPlay.getWidth() / 2, 320);
-		btnOption.setPosition(camera.getWidth() / 2 - btnOption.getWidth() / 2, 400);
-
-		natureSprite.registerEntityModifier(new MoveModifier(1f, -natureSprite
+		natureSprite.registerEntityModifier(new MoveModifier(0.5f, -natureSprite
 				.getWidth(), 0, 0, 0, new IEntityModifierListener() {
 
 			@Override
@@ -103,7 +103,7 @@ IOnMenuItemClickListener {
 			@Override
 			public void onModifierFinished(IModifier<IEntity> pModifier,
 					IEntity pItem) {
-				humanSprite.registerEntityModifier(new MoveModifier(1f, camera
+				humanSprite.registerEntityModifier(new MoveModifier(0.5f, camera
 						.getWidth(),
 						camera.getWidth() - humanSprite.getWidth(), 0, 0, new IEntityModifierListener() {
 
@@ -120,7 +120,7 @@ IOnMenuItemClickListener {
 
 							@Override
 							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-								titleSprite.registerEntityModifier(new ScaleModifier(0.75f, 1f, 2f, new IEntityModifierListener() {
+								titleSprite.registerEntityModifier(new ScaleModifier(0.75f, 1f, 2.5f, new IEntityModifierListener() {
 
 									@Override
 									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
@@ -128,19 +128,26 @@ IOnMenuItemClickListener {
 
 									@Override
 									public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-										grassSprite.registerEntityModifier(new FadeInModifier(1f, new IEntityModifierListener() {
+										FadeInModifier modifier = new FadeInModifier(1f, new IEntityModifierListener() {
 											
 											@Override
 											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+												grassSprite.setPosition(0, camera.getHeight() - grassSprite.getHeight());
+												btnPlay.setPosition(camera.getWidth() / 2 - btnPlay.getWidth() / 2, 320);
+												btnOption.setPosition(camera.getWidth() / 2 - btnOption.getWidth() / 2, 400);
 											}
 											
 											@Override
 											public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-												menuChildScene.addMenuItem(btnPlay);
-												menuChildScene.addMenuItem(btnOption);
+												
 											}
-										}));
+										});
+										grassSprite.registerEntityModifier(modifier);
+										btnPlay.registerEntityModifier(modifier);
+										btnOption.registerEntityModifier(modifier);
 										menuChildScene.attachChild(grassSprite);
+										menuChildScene.addMenuItem(btnPlay);
+										menuChildScene.addMenuItem(btnOption);
 									}
 								}));
 							}
@@ -151,7 +158,7 @@ IOnMenuItemClickListener {
 				menuChildScene.attachChild(humanSprite);
 			}
 		}));
-
+		
 		menuChildScene.attachChild(natureSprite);
 
 		menuChildScene.buildAnimations();
