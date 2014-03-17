@@ -37,7 +37,14 @@ public class GamePausedWindow extends Rectangle {
 				SceneManager.getInstance().loadGameScene(null);
 			}
 		});
-		levelSelectButton = new ButtonSprite(0, 0, ResourceManager.getInstance().btnOptionsTexture, vbom);
+		levelSelectButton = new ButtonSprite(0, 0, ResourceManager.getInstance().btnOptionsTexture, vbom, new OnClickListener() {
+			
+			@Override
+			public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX,
+					float pTouchAreaLocalY) {
+				SceneManager.getInstance().loadLevelSelectScene();
+			}
+		});
 		menuButton = new ButtonSprite(0, 0, ResourceManager.getInstance().btnPlayTexture, vbom, new OnClickListener() {
 			@Override
 			public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX,

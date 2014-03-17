@@ -33,6 +33,7 @@ import com.towertest.logic.GameMap;
 import com.towertest.logic.Level;
 import com.towertest.logic.Wave;
 import com.towertest.logic.Waypoint;
+import com.towertest.managers.GamePreferencesManager;
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager.SceneType;
 import com.towertest.sprites.Enemy;
@@ -192,41 +193,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	public void createScene() {
 		setBackground(new Background(Color.BLUE));
 
-		loadMap(1);
+		loadMap(GamePreferencesManager.getInstance().selectedMap);
+		loadLevel(GamePreferencesManager.getInstance().selectedDifficult);
 
 		hud = new HUD();
-
-		lStarts = new Waypoint[] { new Waypoint(0, 0) };
-		lEnds = new Waypoint[] { new Waypoint(tmxTiledMap.getTileColumns() - 1, 0) };
-
-		map = new GameMap(lStarts, lEnds);
-
-		enemyPrototype = new Enemy[ResourceManager.ENEMY_RESOURCES.length];
-		arrayEn = new ArrayList<Enemy>();
-		arrayTower = new ArrayList<Tower>();
-
-		EnemyBuilder enBuilder = new EnemyBuilder(this);
-
-		for (int i = 0; i < enemyPrototype.length; i++) {
-			enemyPrototype[i] = enBuilder
-					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
-					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
-					.setHealth(500 * (i + 1))
-					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
-					.build();
-
-			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer,
-					getArrayEn());
-		}
-
-		waves = new Wave[] {
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[1] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[2] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[3] }, 2f)};
-		
-		currentLevel = new Level(waves, map);
-
 		camera.setHUD(hud);
 
 		// Pause button
@@ -352,6 +322,39 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		gamePausedWindow = new GamePausedWindow(vbom);
 
 		startWaves();
+	}
+
+	private void loadLevel(int difficult) {
+		lStarts = new Waypoint[] { new Waypoint(0, 0) };
+		lEnds = new Waypoint[] { new Waypoint(tmxTiledMap.getTileColumns() - 1, 0) };
+
+		map = new GameMap(lStarts, lEnds);
+
+		enemyPrototype = new Enemy[ResourceManager.ENEMY_RESOURCES.length];
+		arrayEn = new ArrayList<Enemy>();
+		arrayTower = new ArrayList<Tower>();
+
+		EnemyBuilder enBuilder = new EnemyBuilder(this);
+
+		for (int i = 0; i < enemyPrototype.length; i++) {
+			enemyPrototype[i] = enBuilder
+					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
+					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
+					.setHealth(500 * (i + 1))
+					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
+					.build();
+
+			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer,
+					arrayEn);
+		}
+
+		waves = new Wave[] {
+				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
+				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[1] }, 2f),
+				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[2] }, 2f),
+				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[3] }, 2f)};
+		
+		currentLevel = new Level(waves, map);
 	}
 
 	private void loadMap(int number) {

@@ -12,6 +12,7 @@ import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
 
+import com.towertest.managers.GamePreferencesManager;
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
 import com.towertest.managers.SceneManager.SceneType;
@@ -25,7 +26,7 @@ public class LevelSelectScene extends BaseScene implements
 	private static final int MENU_ID_NORMAL = 1;
 	private static final int MENU_ID_HARD = 2;
 	private static final int MENU_ID_BACK = 4;
-	
+
 	private static final int MENU_ID_PREV = 8;
 	private static final int MENU_ID_NEXT = 16;
 
@@ -76,7 +77,7 @@ public class LevelSelectScene extends BaseScene implements
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		// Catch swipe events
-		
+
 		return false;
 	}
 
@@ -85,18 +86,47 @@ public class LevelSelectScene extends BaseScene implements
 			float pMenuItemLocalX, float pMenuItemLocalY) {
 		switch (pMenuItem.getID()) {
 		case MENU_ID_EASY:
+			GamePreferencesManager.getInstance().selectedDifficult = 0;
+			SceneManager.getInstance().loadGameScene(
+					ResourceManager.getInstance().engine);
+			return true;
 		case MENU_ID_NORMAL:
+			GamePreferencesManager.getInstance().selectedDifficult = 1;
+			SceneManager.getInstance().loadGameScene(
+					ResourceManager.getInstance().engine);
+			return true;
 		case MENU_ID_HARD:
-			SceneManager.getInstance().loadGameScene(ResourceManager.getInstance().engine);
+			GamePreferencesManager.getInstance().selectedDifficult = 2;
+			SceneManager.getInstance().loadGameScene(
+					ResourceManager.getInstance().engine);
 			return true;
 		case MENU_ID_BACK:
 			SceneManager.getInstance().loadMainMenuScene();
 			return true;
 		case MENU_ID_PREV:
-			mapSelector.registerEntityModifier(new MoveByModifier(1f, 800, 0));
+			if (GamePreferencesManager.getInstance().selectedMap == 0) {
+				// At first map, move to last map.
+				GamePreferencesManager.getInstance().selectedMap = ResourceManager.MAP_RESOURCES.length - 1;
+				mapSelector.registerEntityModifier(new MoveByModifier(0.5f,
+						-1600, 0));
+			} else {
+				mapSelector.registerEntityModifier(new MoveByModifier(0.5f,
+						800, 0));
+				GamePreferencesManager.getInstance().selectedMap -= 1;
+			}
 			return true;
 		case MENU_ID_NEXT:
-			mapSelector.registerEntityModifier(new MoveByModifier(1f, -800, 0));
+			if (GamePreferencesManager.getInstance().selectedMap == ResourceManager.MAP_RESOURCES.length - 1) {
+				// At last map. Move to first map
+				GamePreferencesManager.getInstance().selectedMap = 0;
+				mapSelector.registerEntityModifier(new MoveByModifier(0.5f,
+						1600, 0));
+			}
+			else {
+				mapSelector
+				.registerEntityModifier(new MoveByModifier(0.5f, -800, 0));
+				GamePreferencesManager.getInstance().selectedMap += 1;
+			}
 			return true;
 		}
 		return false;
@@ -108,54 +138,56 @@ public class LevelSelectScene extends BaseScene implements
 	private void createBackground() {
 		menuChildScene.attachChild(new Sprite(0, 0, 800, 480,
 				resourceManager.backgroundTexture, vbom));
-		
+
 		menuChildScene.setBackgroundEnabled(false);
 	}
 
 	private void createMapSelector() {
+		GamePreferencesManager.getInstance().selectedMap = 0;
 		mapSelector = new Rectangle(0, 70, 2400, 240, vbom);
 		mapSelector.setAlpha(0f);
 		for (int i = 0; i < resourceManager.mapTextures.length; i++) {
-			Sprite mapSprite = new Sprite(0, 0, 400, 200,resourceManager.mapTextures[i],
-					vbom);
+			Sprite mapSprite = new Sprite(0, 0, 400, 200,
+					resourceManager.mapTextures[i], vbom);
 			mapSprite.setPosition(
-					i * 800 + camera.getWidth() / 2 - mapSprite.getWidth() / 2, 0);
+					i * 800 + camera.getWidth() / 2 - mapSprite.getWidth() / 2,
+					0);
 			mapSelector.attachChild(mapSprite);
 		}
 		menuChildScene.attachChild(mapSelector);
-		
+
 		IMenuItem nextBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_EASY, resourceManager.nextButtonTexture, vbom),
-				1.2f, 1.0f);
-		
+				MENU_ID_NEXT, resourceManager.nextButtonTexture, vbom), 1.2f,
+				1.0f);
+
 		IMenuItem prevBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_EASY, resourceManager.prevButtonTexture, vbom),
-				1.2f, 1.0f);
-		
+				MENU_ID_PREV, resourceManager.prevButtonTexture, vbom), 1.2f,
+				1.0f);
+
 		prevBtn.setPosition(10, 134);
 		nextBtn.setPosition(790 - prevBtn.getWidth(), 134);
-		
-		menuChildScene.attachChild(nextBtn);
-		menuChildScene.attachChild(prevBtn);
+
+		menuChildScene.addMenuItem(nextBtn);
+		menuChildScene.addMenuItem(prevBtn);
 	}
 
 	private void createDifficultSelector() {
 		IMenuItem easyBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_EASY, 175, 70,resourceManager.difficultEasyTexture, vbom),
-				1.2f, 1.0f);
+				MENU_ID_EASY, 175, 70, resourceManager.difficultEasyTexture,
+				vbom), 1.2f, 1.0f);
 		IMenuItem normalBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_NORMAL, 175, 70, resourceManager.difficultNormalTexture, vbom),
-				1.2f, 1.0f);
+				MENU_ID_NORMAL, 175, 70,
+				resourceManager.difficultNormalTexture, vbom), 1.2f, 1.0f);
 		IMenuItem hardBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_HARD, 175, 70, resourceManager.difficultHardTexture, vbom),
-				1.2f, 1.0f);
+				MENU_ID_HARD, 175, 70, resourceManager.difficultHardTexture,
+				vbom), 1.2f, 1.0f);
 		IMenuItem backBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
 				MENU_ID_BACK, resourceManager.backButtonTexture, vbom), 1.2f,
 				1.0f);
 
-		easyBtn.setPosition(200 - easyBtn.getWidth() / 2, 300);
-		normalBtn.setPosition(400 - hardBtn.getWidth() / 2, 300);
-		hardBtn.setPosition(600 - normalBtn.getWidth() / 2, 300);
+		easyBtn.setPosition(200 - easyBtn.getWidth() / 2, 330);
+		normalBtn.setPosition(400 - hardBtn.getWidth() / 2, 330);
+		hardBtn.setPosition(600 - normalBtn.getWidth() / 2, 330);
 		backBtn.setPosition(30, camera.getHeight() - backBtn.getHeight() - 30);
 
 		menuChildScene.addMenuItem(easyBtn);

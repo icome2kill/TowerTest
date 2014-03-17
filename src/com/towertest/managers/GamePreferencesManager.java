@@ -1,10 +1,10 @@
 package com.towertest.managers;
 
-public class GamePerferencesManager {
+public class GamePreferencesManager {
 	// ===========================================================
 	// Constants
 	// ===========================================================
-	private static final GamePerferencesManager INSTANCE = new GamePerferencesManager();
+	private static final GamePreferencesManager INSTANCE = new GamePreferencesManager();
 	// ===========================================================
 	// Fields
 	// ===========================================================
@@ -16,11 +16,11 @@ public class GamePerferencesManager {
 	// ===========================================================
 	// Constructors
 	// ===========================================================
-	private GamePerferencesManager() {};
+	private GamePreferencesManager() {};
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-	public static GamePerferencesManager getInstance() {
+	public static GamePreferencesManager getInstance() {
 		return INSTANCE;
 	}
 	
