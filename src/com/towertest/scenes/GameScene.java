@@ -298,9 +298,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 2)
 				.setRange(1).setTowerTexture(resourceManager.towerTexture[2])
 				.build());
-		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 3)
-				.setRange(2).setTowerTexture(resourceManager.towerTexture[3])
-				.build());
+//		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 3)
+//				.setRange(2).setTowerTexture(resourceManager.towerTexture[3])
+//				.build());
 
 		for (final Tower tower : prototypeTowers) {
 			prototypeTowerArea.attachChild(tower);
@@ -352,7 +352,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
 					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
 					.setHealth(500 * (i + 1))
-					.setTexture(resourceManager.enemyTexture[i]).setSpeed(600f)
+					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
 					.build();
 
 			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);

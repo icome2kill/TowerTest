@@ -66,17 +66,17 @@ IOnMenuItemClickListener {
 		// Create background
 		menuChildScene.attachChild(new Sprite(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, ResourceManager
 				.getInstance().backgroundTexture, vbom));
-		menuChildScene.attachChild(new Sprite(0, 0, (int) (270 * 1.5), GameActivity.CAMERA_HEIGHT,
-				ResourceManager.getInstance().treeTexture, vbom));
-
-		// Nature and human sprites
-		final Sprite natureSprite = new Sprite(-500, -500, (int) (167 * 1.5), GameActivity.CAMERA_HEIGHT,
-				ResourceManager.getInstance().natureTexture, vbom);
-		final Sprite humanSprite = new Sprite(-500, -500, (int) (167 * 1.5), GameActivity.CAMERA_HEIGHT,
-				ResourceManager.getInstance().humanTexture, vbom);
-
-		// Title Sprites
-		final Sprite titleSprite = new Sprite(380, 70, ResourceManager.getInstance().titleTexture, vbom);
+//		menuChildScene.attachChild(new Sprite(0, 0, (int) (270 * 1.5), GameActivity.CAMERA_HEIGHT,
+//				ResourceManager.getInstance().treeTexture, vbom));
+//
+//		// Nature and human sprites
+//		final Sprite natureSprite = new Sprite(-500, -500, (int) (167 * 1.5), GameActivity.CAMERA_HEIGHT,
+//				ResourceManager.getInstance().natureTexture, vbom);
+//		final Sprite humanSprite = new Sprite(-500, -500, (int) (167 * 1.5), GameActivity.CAMERA_HEIGHT,
+//				ResourceManager.getInstance().humanTexture, vbom);
+//
+//		// Title Sprites
+//		final Sprite titleSprite = new Sprite(380, 70, ResourceManager.getInstance().titleTexture, vbom);
 
 		// Button
 		final IMenuItem btnPlay = new ScaleMenuItemDecorator(
@@ -87,82 +87,88 @@ IOnMenuItemClickListener {
 				new SpriteMenuItem(MENU_HELP, resourceManager.btnOptionsTexture,
 						vbom), 1.2f, 1);
 		
-		btnPlay.setPosition(-500, -500);
-		btnOption.setPosition(-500, -500);
+//		btnPlay.setPosition(-500, -500);
+//		btnOption.setPosition(-500, -500);
 		
 		// Grass Sprite
-		final Sprite grassSprite = new Sprite(-500, -500, GameActivity.CAMERA_WIDTH, 161 * GameActivity.CAMERA_WIDTH / 512, ResourceManager.getInstance().grassTexture, vbom);
-
-		natureSprite.registerEntityModifier(new MoveModifier(0.5f, -natureSprite
-				.getWidth(), 0, 0, 0, new IEntityModifierListener() {
-
-			@Override
-			public void onModifierStarted(IModifier<IEntity> pModifier,
-					IEntity pItem) {
-			}
-
-			@Override
-			public void onModifierFinished(IModifier<IEntity> pModifier,
-					IEntity pItem) {
-				humanSprite.registerEntityModifier(new MoveModifier(0.5f, camera
-						.getWidth(),
-						camera.getWidth() - humanSprite.getWidth(), 0, 0, new IEntityModifierListener() {
-
-					@Override
-					public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-					}
-
-					@Override
-					public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-						titleSprite.registerEntityModifier(new ScaleModifier(0.5f, 0f, 3f, new IEntityModifierListener() {
-							@Override
-							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-							}
-
-							@Override
-							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-								titleSprite.registerEntityModifier(new ScaleModifier(0.75f, 3f, 2.5f, new IEntityModifierListener() {
-
-									@Override
-									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-									}
-
-									@Override
-									public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-										FadeInModifier modifier = new FadeInModifier(1f, new IEntityModifierListener() {
-											
-											@Override
-											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-												grassSprite.setPosition(0, camera.getHeight() - grassSprite.getHeight());
-												btnPlay.setPosition(camera.getWidth() / 2 - btnPlay.getWidth() / 2, 320);
-												btnOption.setPosition(camera.getWidth() / 2 - btnOption.getWidth() / 2, 400);
-											}
-											
-											@Override
-											public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-												
-											}
-										});
-										grassSprite.registerEntityModifier(modifier);
-										btnPlay.registerEntityModifier(modifier);
-										btnOption.registerEntityModifier(modifier);
-										menuChildScene.attachChild(grassSprite);
-										menuChildScene.addMenuItem(btnPlay);
-										menuChildScene.addMenuItem(btnOption);
-									}
-								}));
-							}
-						}));
-						menuChildScene.attachChild(titleSprite);
-					}
-				}));
-				menuChildScene.attachChild(humanSprite);
-			}
-		}));
+//		final Sprite grassSprite = new Sprite(-500, -500, GameActivity.CAMERA_WIDTH, 161 * GameActivity.CAMERA_WIDTH / 512, ResourceManager.getInstance().grassTexture, vbom);
+//
+//		natureSprite.registerEntityModifier(new MoveModifier(0.5f, -natureSprite
+//				.getWidth(), 0, 0, 0, new IEntityModifierListener() {
+//
+//			@Override
+//			public void onModifierStarted(IModifier<IEntity> pModifier,
+//					IEntity pItem) {
+//			}
+//
+//			@Override
+//			public void onModifierFinished(IModifier<IEntity> pModifier,
+//					IEntity pItem) {
+//				humanSprite.registerEntityModifier(new MoveModifier(0.5f, camera
+//						.getWidth(),
+//						camera.getWidth() - humanSprite.getWidth(), 0, 0, new IEntityModifierListener() {
+//
+//					@Override
+//					public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+//					}
+//
+//					@Override
+//					public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+//						titleSprite.registerEntityModifier(new ScaleModifier(0.5f, 0f, 3f, new IEntityModifierListener() {
+//							@Override
+//							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+//							}
+//
+//							@Override
+//							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+//								titleSprite.registerEntityModifier(new ScaleModifier(0.75f, 3f, 2.5f, new IEntityModifierListener() {
+//
+//									@Override
+//									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+//									}
+//
+//									@Override
+//									public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+//										FadeInModifier modifier = new FadeInModifier(1f, new IEntityModifierListener() {
+//											
+//											@Override
+//											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+//												grassSprite.setPosition(0, camera.getHeight() - grassSprite.getHeight());
+//												btnPlay.setPosition(camera.getWidth() / 2 - btnPlay.getWidth() / 2, 320);
+//												btnOption.setPosition(camera.getWidth() / 2 - btnOption.getWidth() / 2, 400);
+//											}
+//											
+//											@Override
+//											public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+//												
+//											}
+//										});
+//										grassSprite.registerEntityModifier(modifier);
+//										btnPlay.registerEntityModifier(modifier);
+//										btnOption.registerEntityModifier(modifier);
+//										menuChildScene.attachChild(grassSprite);
+//										menuChildScene.addMenuItem(btnPlay);
+//										menuChildScene.addMenuItem(btnOption);
+//									}
+//								}));
+//							}
+//						}));
+//						menuChildScene.attachChild(titleSprite);
+//					}
+//				}));
+//				menuChildScene.attachChild(humanSprite);
+//			}
+//		}));
 		
-		menuChildScene.attachChild(natureSprite);
+		btnPlay.setPosition(camera.getWidth() - btnPlay.getWidth(), 200);
+		btnOption.setPosition(camera.getWidth() - btnPlay.getWidth(), 300);
+		
+		menuChildScene.addMenuItem(btnPlay);
+		menuChildScene.addMenuItem(btnOption);
+		
+//		menuChildScene.attachChild(natureSprite);
 
-		menuChildScene.buildAnimations();
+//		menuChildScene.buildAnimations();
 		menuChildScene.setOnMenuItemClickListener(this);
 		
 		setBackgroundEnabled(false);

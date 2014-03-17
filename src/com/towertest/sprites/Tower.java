@@ -193,9 +193,9 @@ public class Tower extends AnimatedSprite {
 					Sprite myBullet = this.getLastBulletSprite();
 					scene.attachChild(myBullet);
 
-//					long delay = (long) (cooldown / 1.1);
-//					long[] ANIMATE = {delay };
-//					animate(ANIMATE, false);
+					long delay = (long) (cooldown / 6.1);
+					long[] ANIMATE = {delay, delay, delay, delay, delay, delay };
+					animate(ANIMATE, false);
 					return true;
 				} else {
 					return false;

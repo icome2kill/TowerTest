@@ -182,7 +182,7 @@ public class Enemy extends AnimatedSprite {
 							public void onModifierStarted(
 									IModifier<IEntity> pModifier, IEntity pItem) {
 								// Do stuff here if you want to
-								long ANIMATE[] = { 300, 300, 300 };
+								long ANIMATE[] = { 300, 300, 300, 300, 300, 300 };
 								Enemy.this.animate(ANIMATE);
 							}
 

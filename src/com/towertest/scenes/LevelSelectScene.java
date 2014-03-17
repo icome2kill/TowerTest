@@ -11,6 +11,7 @@ import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.util.color.Color;
 
 import com.towertest.GameActivity;
 import com.towertest.managers.GamePreferencesManager;
@@ -137,9 +138,13 @@ public class LevelSelectScene extends BaseScene implements
 	// Methods
 	// ===========================================================
 	private void createBackground() {
-		menuChildScene.attachChild(new Sprite(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT,
-				resourceManager.backgroundTexture, vbom));
-
+//		menuChildScene.attachChild(new Sprite(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT,
+//				resourceManager.backgroundTexture, vbom));
+		
+		Rectangle background = new Rectangle(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
+		background.setColor(Color.WHITE);
+		menuChildScene.attachChild(background);
+		
 		menuChildScene.setBackgroundEnabled(false);
 	}
 

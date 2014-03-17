@@ -47,7 +47,7 @@ public class ResourceManager {
 	public static final String[] ENEMY_RESOURCES = { "enemy1.png",
 			"enemy2.png", "enemy3.png", "enemy4.png" };
 	public static final String[] TOWER_RESOURCES = { "tower1.png",
-			"tower2.png", "tower3.png", "tower4.png" };
+			"tower2.png", "tower3.png" };
 	public static final String[] MAP_RESOURCES = { "map1", "map2", "map3" };
 
 	public static int TILEID_PATH[] = new int[MAP_RESOURCES.length];
@@ -162,7 +162,7 @@ public class ResourceManager {
 		for (int i = 0; i < towerTexture.length; i++) {
 			towerTexture[i] = BitmapTextureAtlasTextureRegionFactory
 					.createTiledFromAsset(gameTextureAtlas, activity,
-							TOWER_RESOURCES[i], 1, 1);
+							TOWER_RESOURCES[i], 6, 1);
 		}
 		bulletTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, Projectile.texture);
@@ -179,7 +179,7 @@ public class ResourceManager {
 		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
 			enemyTexture[i] = BitmapTextureAtlasTextureRegionFactory
 					.createTiledFromAsset(gameTextureAtlas, activity,
-							ENEMY_RESOURCES[i], 3, 1);
+							ENEMY_RESOURCES[i], 6, 1);
 		}
 
 		towerRemoveButtonTexture = BitmapTextureAtlasTextureRegionFactory
