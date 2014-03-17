@@ -16,6 +16,7 @@ import org.andengine.extension.tmx.TMXTiledMap;
 import org.andengine.extension.tmx.util.exception.TMXLoadException;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -28,7 +29,7 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
-import android.graphics.Typeface;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.towertest.GameActivity;
@@ -72,6 +73,11 @@ public class ResourceManager {
 	public TMXTiledMap tmxTiledMap;
 	public ITextureRegion towerRemoveButtonTexture;
 	public Sound fireSound;
+
+	public ITextureRegion resumeButtonTexture;
+	public ITextureRegion lvlSelectButtonTexture;
+	public ITextureRegion mainMenuButtonTexture;
+	public ITextureRegion restartButtonTexture;
 
 	private BuildableBitmapTextureAtlas mainMenuTextureAtlas;
 	public ITextureRegion btnOptionsTexture;
@@ -185,10 +191,14 @@ public class ResourceManager {
 		texPlay = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "play.png");
 
-		// Borrow the background from menu
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(gameTextureAtlas, activity, "bg.png");
+		resumeButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(gameTextureAtlas, activity, "resume.png");
+		lvlSelectButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(gameTextureAtlas, activity, "lvl_select.png");
+		restartButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(gameTextureAtlas, activity, "restart.png");
+		mainMenuButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(gameTextureAtlas, activity, "main_menu.png");
 
 		try {
 			gameTextureAtlas
@@ -222,7 +232,11 @@ public class ResourceManager {
 								} else if (pTMXTileProperties
 										.containsTMXProperty(
 												GameScene.TAG_TILED_PROPERTY_NAME_PATH,
-												GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
+												GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)
+										&& !pTMXTileProperties
+												.containsTMXProperty(
+														GameScene.TAG_TILED_PROPERTY_NAME_BUILDABLE,
+														GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
 									TILEID_UNPATHABLE[i] = pTMXTile
 											.getGlobalTileID();
 								}
@@ -254,6 +268,11 @@ public class ResourceManager {
 		bulletTexture = null;
 		hitAreaGoodTexture = null;
 		hitAreaBadTexture = null;
+		resumeButtonTexture = null;
+		lvlSelectButtonTexture = null;
+		mainMenuButtonTexture = null;
+		restartButtonTexture = null;
+
 		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
 			enemyTexture[i] = null;
 		}
@@ -330,7 +349,7 @@ public class ResourceManager {
 
 		levelSelectTextureAtlas = new BuildableBitmapTextureAtlas(
 				activity.getTextureManager(), 1024, 1024);
-		
+
 		mapTextures = new ITextureRegion[MAP_RESOURCES.length];
 		for (int i = 0; i < mapTextures.length; i++) {
 			mapTextures[i] = BitmapTextureAtlasTextureRegionFactory
@@ -349,11 +368,13 @@ public class ResourceManager {
 				.createFromAsset(levelSelectTextureAtlas, activity, "back.png");
 
 		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(levelSelectTextureAtlas, activity, "background_resized.png");
-		
+				.createFromAsset(levelSelectTextureAtlas, activity,
+						"background_resized.png");
+
 		prevButtonTexture = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(levelSelectTextureAtlas, activity, "previous.png");
-		
+				.createFromAsset(levelSelectTextureAtlas, activity,
+						"previous.png");
+
 		nextButtonTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity, "next.png");
 
@@ -381,18 +402,20 @@ public class ResourceManager {
 	}
 
 	public void loadFonts() {
-		font10 = FontFactory.create(activity.getFontManager(),
+		FontFactory.setAssetBasePath("font/");
+		final ITexture mainFontTexture = new BitmapTextureAtlas(
 				activity.getTextureManager(), 256, 256,
-				TextureOptions.BILINEAR,
-				Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 10);
-		font20 = FontFactory.create(activity.getFontManager(),
-				activity.getTextureManager(), 256, 256,
-				TextureOptions.BILINEAR,
-				Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 20);
-		font40 = FontFactory.create(activity.getFontManager(),
-				activity.getTextureManager(), 256, 256,
-				TextureOptions.BILINEAR,
-				Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 40);
+				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+		font10 = FontFactory.createStrokeFromAsset(activity.getFontManager(),
+				mainFontTexture, activity.getAssets(), "font.ttf", 12f, true,
+				Color.RED, 0.5f, Color.BLACK);
+		font20 = FontFactory.createStrokeFromAsset(activity.getFontManager(),
+				mainFontTexture, activity.getAssets(), "font.ttf", 26f, true,
+				Color.RED, 0.5f, Color.BLACK);
+		font40 = FontFactory.createStrokeFromAsset(activity.getFontManager(),
+				mainFontTexture, activity.getAssets(), "font.ttf", 40f, true,
+				Color.RED, 0.5f, Color.BLACK);
 
 		font10.load();
 		font20.load();

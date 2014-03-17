@@ -1,123 +1,173 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="13" height="7" tilewidth="56" tileheight="56">
- <tileset firstgid="1" name="war1" tilewidth="32" tileheight="32" spacing="1" margin="1">
-  <image source="gfx/war1.png" width="626" height="659"/>
+<map version="1.0" orientation="orthogonal" width="15" height="9" tilewidth="64" tileheight="64">
+ <tileset firstgid="1" name="tileset_1" tilewidth="32" tileheight="32">
+  <image source="gfx/tileset_1.png" width="736" height="672"/>
   <tile id="99">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
    </properties>
   </tile>
-  <tile id="115">
+  <tile id="133">
+   <properties>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="137">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
    </properties>
   </tile>
-  <tile id="158">
+  <tile id="170">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="227">
    <properties>
     <property name="Path" value="True"/>
    </properties>
   </tile>
-  <tile id="317">
-   <properties>
-    <property name="Path" value="False"/>
-   </properties>
-  </tile>
  </tileset>
- <layer name="Tile Layer 1" width="13" height="7">
+ <layer name="Tile Layer 1" width="15" height="9">
   <data>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="100"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="118"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="100"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
-   <tile gid="118"/>
-   <tile gid="116"/>
-   <tile gid="116"/>
-   <tile gid="116"/>
-   <tile gid="116"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="318"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="159"/>
-   <tile gid="318"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="27"/>
+   <tile gid="138"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="171"/>
+   <tile gid="134"/>
+   <tile gid="134"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="228"/>
+   <tile gid="171"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
+   <tile gid="138"/>
   </data>
  </layer>
 </map>

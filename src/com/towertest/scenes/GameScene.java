@@ -71,12 +71,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private Text livesText;
 	private Text waveText;
 	private Text scoreText;
-	private Text enemyCountText;
+	// private Text enemyCountText;
 
 	private long credits;
 	private long lives;
 	private long scores;
-	
+
 	private int currentMap;
 
 	private final long initialCredits = 3000;
@@ -102,7 +102,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	private GamePausedWindow gamePausedWindow;
 
 	private BuildTowerTouchHandler btth;
-	
+
 	private Rectangle infoArea;
 	private Rectangle prototypeTowerArea;
 
@@ -200,7 +200,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		camera.setHUD(hud);
 
 		// Pause button
-		pauseButton = new ButtonSprite(0, camera.getHeight() - 40,
+		pauseButton = new ButtonSprite(8, camera.getHeight() - TILE_HEIGHT + 8,
 				resourceManager.texPause, resourceManager.texPlay, vbom,
 				new OnClickListener() {
 					@Override
@@ -241,22 +241,23 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		setOnSceneTouchListener(this);
 		hud.setTouchAreaBindingOnActionDownEnabled(true);
 
-		creditText = new Text(20, 0, resourceManager.font20, "$ 0123456789",
+		creditText = new Text(20, 10, resourceManager.font20, "$ 0123456789",
 				"$ 0123456789".length(), vbom);
 
-		livesText = new Text(200, 0, resourceManager.font20,
-				"Lives 0123456789", "Lives 0123456789".length(), vbom);
+		livesText = new Text(camera.getWidth() - 150, 10,
+				resourceManager.font20, "Lives: 0123456789",
+				"Lives 0123456789".length(), vbom);
 
-		waveText = new Text(300, 0, resourceManager.font20, "Wave 1234567890",
+		waveText = new Text(200, 10, resourceManager.font20, "Wave 1234567890",
 				"Wave 1234567890".length(), vbom);
 
-		scoreText = new Text(650, 0, resourceManager.font20,
+		scoreText = new Text(400, 10, resourceManager.font20,
 				"Scores: 0123456789", "Score: 0123456789".length(), vbom);
 
-		enemyCountText = new Text(300, 25, resourceManager.font20,
-				"Enemy: 0123456789", "Enemy: 0123456789".length(), vbom);
-
-		enemyCountText.setText("Enemy: 0/" + waves[0].getTotal());
+		// enemyCountText = new Text(300, 10, resourceManager.font20,
+		// "Enemy: 0123456789", "Enemy: 0123456789".length(), vbom);
+		//
+		// enemyCountText.setText("Enemy: 0/" + waves[0].getTotal());
 
 		waveText.setText("Wave 1/" + waves.length);
 
@@ -270,12 +271,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		subtractLives(0); // initialize the value
 
 		infoArea = new Rectangle(0, 0, camera.getWidth(), 40, vbom);
-		infoArea.setColor(Color.BLUE);
+		infoArea.setColor(Color.TRANSPARENT);
 		infoArea.attachChild(creditText);
 		infoArea.attachChild(livesText);
 		infoArea.attachChild(waveText);
 		infoArea.attachChild(scoreText);
-		infoArea.attachChild(enemyCountText);
+		// infoArea.attachChild(enemyCountText);
 
 		hud.attachChild(infoArea);
 
@@ -284,18 +285,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 		TowerBuilder towerBuilder = new TowerBuilder(this);
 
-		prototypeTowerArea = new Rectangle(camera.getWidth() - 56, 0,
-				56, camera.getHeight(), vbom);
+		prototypeTowerArea = new Rectangle(camera.getWidth() - TILE_WIDTH,
+				TILE_WIDTH, TILE_WIDTH, camera.getHeight() - TILE_WIDTH * 2,
+				vbom);
 		prototypeTowerArea.setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
 
-		prototypeTowers.add(towerBuilder.setX(0).setY(56).setRange(3)
+		prototypeTowers.add(towerBuilder.setX(0).setY(0).setRange(3)
 				.setTowerTexture(resourceManager.towerTexture[0]).build());
-		prototypeTowers.add(towerBuilder.setX(0).setY(112).setRange(4)
-				.setTowerTexture(resourceManager.towerTexture[1]).build());
-		prototypeTowers.add(towerBuilder.setX(0).setY(168).setRange(1)
-				.setTowerTexture(resourceManager.towerTexture[2]).build());
-		prototypeTowers.add(towerBuilder.setX(0).setY(224).setRange(2)
-				.setTowerTexture(resourceManager.towerTexture[3]).build());
+		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 1)
+				.setRange(4).setTowerTexture(resourceManager.towerTexture[1])
+				.build());
+		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 2)
+				.setRange(1).setTowerTexture(resourceManager.towerTexture[2])
+				.build());
+		prototypeTowers.add(towerBuilder.setX(0).setY(TILE_HEIGHT * 3)
+				.setRange(2).setTowerTexture(resourceManager.towerTexture[3])
+				.build());
 
 		for (final Tower tower : prototypeTowers) {
 			prototypeTowerArea.attachChild(tower);
@@ -309,6 +314,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					return false;
 				}
 			});
+			Text priceText = new Text(TILE_WIDTH / 2, TILE_HEIGHT / 2 + 10,
+					ResourceManager.getInstance().font20, "0123456789",
+					"0123456789".length(), vbom);
+			priceText.setText(Long.toString(tower.getCredits()));
+			tower.attachChild(priceText);
 			hud.registerTouchArea(tower);
 		}
 		hud.attachChild(prototypeTowerArea);
@@ -325,8 +335,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 	}
 
 	private void loadLevel(int difficult) {
-		lStarts = new Waypoint[] { new Waypoint(0, 0) };
-		lEnds = new Waypoint[] { new Waypoint(tmxTiledMap.getTileColumns() - 1, 0) };
+		lStarts = new Waypoint[] { new Waypoint(0, 1) };
+		lEnds = new Waypoint[] { new Waypoint(tmxTiledMap.getTileColumns() - 1,
+				6) };
 
 		map = new GameMap(lStarts, lEnds);
 
@@ -341,19 +352,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
 					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
 					.setHealth(500 * (i + 1))
-					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
+					.setTexture(resourceManager.enemyTexture[i]).setSpeed(600f)
 					.build();
 
-			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer,
-					arrayEn);
+			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
 		}
 
-		waves = new Wave[] {
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[1] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[2] }, 2f),
-				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[3] }, 2f)};
+//		waves = new Wave[] {
+//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
+//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[1] }, 2f),
+//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[2] }, 2f),
+//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[3] }, 2f) };
 		
+		waves = new Wave[] { new Wave(new int [] { 1 }, new Enemy[] { enemyPrototype[0] }, 1f) };
+
 		currentLevel = new Level(waves, map);
 	}
 
@@ -395,12 +407,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		isPaused = !isPaused;
 		pauseButton.setCurrentTileIndex(isPaused ? 1 : 0);
 		if (isPaused) {
-//			setOnSceneTouchListener(null);
+			// setOnSceneTouchListener(null);
 			gamePausedWindow.show(this, camera);
 		} else {
-//			setOnSceneTouchListener(this);
-//			registerTouchArea(prototypeTowerArea);
-//			setOnAreaTouchListener(btth);
+			// setOnSceneTouchListener(this);
+			// registerTouchArea(prototypeTowerArea);
+			// setOnAreaTouchListener(btth);
 			gamePausedWindow.detachSelf();
 		}
 		hud.registerTouchArea(pauseButton);
@@ -451,9 +463,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 							waveText.setText("Wave "
 									+ currentLevel.getCurrentWaveNumber() + "/"
 									+ currentLevel.getWaves().length);
-							enemyCountText.setText("Enemy "
-									+ wave.getCurrentEnemyCount() + "/"
-									+ wave.getTotal());
+							// enemyCountText.setText("Enemy "
+							// + wave.getCurrentEnemyCount() + "/"
+							// + wave.getTotal());
 						}
 					}
 				});
@@ -476,7 +488,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		return y + camera.getCenterY() - camera.getHeight() / 2;
 	}
 
-	public void showTowerDetails(Tower tower, boolean showRange, boolean showRemove) {
+	public void showTowerDetails(Tower tower, boolean showRange,
+			boolean showRemove) {
 		towerDetailsWindow.detachSelf();
 		towerDetailsWindow.show(this, camera, tower, showRange, showRemove);
 	}
