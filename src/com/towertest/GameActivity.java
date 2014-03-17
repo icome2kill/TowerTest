@@ -104,21 +104,21 @@ public class GameActivity extends SimpleBaseGameActivity {
 		final EngineOptions mEngine = new EngineOptions(true,
 				ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
 
-		if (MultiTouch.isSupported(this)) {
-			if (MultiTouch.isSupportedDistinct(this))
-				Toast.makeText(this,
-						"MultiTouch detected Pinch Zoom will work properly!",
-						Toast.LENGTH_SHORT).show();
-			else
-				Toast.makeText(
-						this,
-						"MultiTouch detected, but your device has problems distinguishing between fingers",
-						Toast.LENGTH_LONG).show();
-		} else
-			Toast.makeText(
-					this,
-					"Sorry your device does NOT support MultiTouch! Use Zoom Buttons.",
-					Toast.LENGTH_LONG).show();
+//		if (MultiTouch.isSupported(this)) {
+//			if (MultiTouch.isSupportedDistinct(this))
+//				Toast.makeText(this,
+//						"MultiTouch detected Pinch Zoom will work properly!",
+//						Toast.LENGTH_SHORT).show();
+//			else
+//				Toast.makeText(
+//						this,
+//						"MultiTouch detected, but your device has problems distinguishing between fingers",
+//						Toast.LENGTH_LONG).show();
+//		} else
+//			Toast.makeText(
+//					this,
+//					"Sorry your device does NOT support MultiTouch! Use Zoom Buttons.",
+//					Toast.LENGTH_LONG).show();
 		mEngine.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 		return mEngine;
 	}

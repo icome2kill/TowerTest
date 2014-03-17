@@ -6,7 +6,6 @@ import com.towertest.scenes.BaseScene;
 import com.towertest.scenes.GameScene;
 import com.towertest.scenes.LevelSelectScene;
 import com.towertest.scenes.MainMenuScene;
-import com.towertest.scenes.MapSelectScene;
 
 public class SceneManager {
 	// ===========================================================
@@ -90,13 +89,6 @@ public class SceneManager {
 		ResourceManager.getInstance().loadMainMenuResources();
 		menuScene = new MainMenuScene();
 		setScene(menuScene);
-	}
-
-	public void loadMapSelectScene() {
-		disposeCurrentScene();
-		ResourceManager.getInstance().loadMapSelectResources();
-		mapSelectScene = new MapSelectScene();
-		setScene(mapSelectScene);
 	}
 	
 	public void loadLevelSelectScene() {

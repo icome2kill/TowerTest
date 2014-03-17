@@ -193,12 +193,9 @@ public class Tower extends AnimatedSprite {
 					Sprite myBullet = this.getLastBulletSprite();
 					scene.attachChild(myBullet);
 
-					setCurrentTileIndex(6);
-					
-					long delay = (long) (cooldown / 6.1);
-					long[] ANIMATE = {delay, delay, delay, delay, delay, delay };
-					animate(ANIMATE, false);
-					Log.d("Tower", "Playing animation");
+//					long delay = (long) (cooldown / 1.1);
+//					long[] ANIMATE = {delay };
+//					animate(ANIMATE, false);
 					return true;
 				} else {
 					return false;
@@ -354,7 +351,8 @@ public class Tower extends AnimatedSprite {
 				scene.getTmxLayer()
 						.getTMXTileAt(getX(), getY())
 						.setGlobalTileID(scene.getTmxTiledMap(),
-								ResourceManager.TILEID_UNPATHABLE);
+								ResourceManager.TILEID_UNPATHABLE[scene.getCurrentMap()]);
+				
 				Path path;
 				// first go through and update all the enemies in the ArrayList
 				for (Enemy en : scene.getArrayEn()) {

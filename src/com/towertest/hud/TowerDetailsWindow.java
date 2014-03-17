@@ -44,7 +44,6 @@ public class TowerDetailsWindow extends Rectangle {
 		attachChild(damageText);
 		attachChild(rangeText);
 		attachChild(speedText);
-		attachChild(removeButton);
 	}
 	// ===========================================================
 	// Getter & Setter
@@ -57,11 +56,11 @@ public class TowerDetailsWindow extends Rectangle {
 	// ===========================================================
 	// Methods
 	// ===========================================================
-	public void show(final Scene scene, Camera camera, final Tower tower, boolean showRange) {
+	public void show(final GameScene scene, Camera camera, final Tower tower, boolean showRange, boolean showRemove) {
 		currentTower = tower;
 		currentScene = scene;
 		
-		setPosition(40, camera.getHeight()-90);
+		setPosition(40, camera.getHeight() - 40);
 		damageText.setText("Damage: " + tower.getDamage());
 		rangeText.setText("Range: " + tower.getRange());
 		speedText.setText("Speed: " + tower.getCD());
@@ -70,19 +69,28 @@ public class TowerDetailsWindow extends Rectangle {
 			@Override
 			public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX,
 					float pTouchAreaLocalY) {
+				if (scene.getArrayTower().contains(tower))
+					tower.remove(true, (GameScene) scene);
 				detachSelf();
-				tower.remove(true, (GameScene) scene);
 			}
 		});
 		
+		detachChild(removeButton);
+		if (showRemove) {
+			attachChild(removeButton);
+		}
+		
 		tower.setHitAreaShown(scene, showRange);
 		
-		scene.registerTouchArea(removeButton);
-		scene.attachChild(this);
+		camera.getHUD().registerTouchArea(removeButton);
+		camera.getHUD().attachChild(this);
 	}
 
 	@Override
 	public boolean detachSelf() {
+		if (currentScene != null) {
+			ResourceManager.getInstance().camera.getHUD().unregisterTouchArea(removeButton);
+		}
 		if (currentTower != null) {
 			currentTower.setHitAreaShown(currentScene, false);
 		}

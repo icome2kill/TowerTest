@@ -41,17 +41,16 @@ public class ResourceManager {
 	// ===========================================================
 	private static final ResourceManager INSTANCE = new ResourceManager();
 
-	public static int TILEID_BLOCKED = 100; // BLock is both not pathable nor
-											// buildable
-	public static int TILEID_PATH = 1;
-	public static int TILEID_UNPATHABLE = 1;
+	public static int TILEID_BLOCKED = 100;
 
-	public static final String[] ENEMY_RESOURCES = { "cavalier.png",
-			"fighter.png", "knight.png", "warrior.png" };
-	public static final String[] TOWER_RESOURCES = { "cavalier.png",
-			"warrior.png" };
-	public static final String[] MAP_RESOURCES = { "map1.tmx", "map2.tmx",
-			"map3.tmx" };
+	public static final String[] ENEMY_RESOURCES = { "enemy1.png",
+			"enemy2.png", "enemy3.png", "enemy4.png" };
+	public static final String[] TOWER_RESOURCES = { "tower1.png",
+			"tower2.png", "tower3.png", "tower4.png" };
+	public static final String[] MAP_RESOURCES = { "map1", "map2", "map3" };
+
+	public static int TILEID_PATH[] = new int[MAP_RESOURCES.length];
+	public static int TILEID_UNPATHABLE[] = new int[MAP_RESOURCES.length];
 
 	// ===========================================================
 	// Fields
@@ -85,9 +84,20 @@ public class ResourceManager {
 	public ITextureRegion natureTexture;
 	public ITextureRegion grassTexture;
 
+	private BuildableBitmapTextureAtlas levelSelectTextureAtlas;
+	public ITextureRegion[] mapTextures;
+	public ITextureRegion difficultEasyTexture;
+	public ITextureRegion difficultNormalTexture;
+	public ITextureRegion difficultHardTexture;
+	public ITextureRegion backButtonTexture;
+	public ITextureRegion nextButtonTexture;
+	public ITextureRegion prevButtonTexture;
+
 	public Font font10;
 	public Font font20;
 	public Font font40;
+
+	private int i = 0;
 
 	// ===========================================================
 	// Constructors
@@ -137,7 +147,7 @@ public class ResourceManager {
 	}
 
 	private void loadGameGraphics() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		gameTextureAtlas = new BuildableBitmapTextureAtlas(
 				activity.getTextureManager(), 1024, 1024);
 
@@ -146,10 +156,11 @@ public class ResourceManager {
 		for (int i = 0; i < towerTexture.length; i++) {
 			towerTexture[i] = BitmapTextureAtlasTextureRegionFactory
 					.createTiledFromAsset(gameTextureAtlas, activity,
-							TOWER_RESOURCES[i], 6, 1);
+							TOWER_RESOURCES[i], 1, 1);
 		}
 		bulletTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, Projectile.texture);
+
 		hitAreaGoodTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity,
 						"towerRangeGood.png");
@@ -162,7 +173,7 @@ public class ResourceManager {
 		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
 			enemyTexture[i] = BitmapTextureAtlasTextureRegionFactory
 					.createTiledFromAsset(gameTextureAtlas, activity,
-							ENEMY_RESOURCES[i], 6, 1);
+							ENEMY_RESOURCES[i], 3, 1);
 		}
 
 		towerRemoveButtonTexture = BitmapTextureAtlasTextureRegionFactory
@@ -173,6 +184,11 @@ public class ResourceManager {
 				gameTextureAtlas, activity, "pause.png");
 		texPlay = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "play.png");
+
+		// Borrow the background from menu
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(gameTextureAtlas, activity, "bg.png");
 
 		try {
 			gameTextureAtlas
@@ -202,12 +218,12 @@ public class ResourceManager {
 										.containsTMXProperty(
 												GameScene.TAG_TILED_PROPERTY_NAME_PATH,
 												GameScene.TAG_TILED_PROPERTY_VALUE_TRUE)) {
-									TILEID_PATH = pTMXTile.getGlobalTileID();
+									TILEID_PATH[i] = pTMXTile.getGlobalTileID();
 								} else if (pTMXTileProperties
 										.containsTMXProperty(
 												GameScene.TAG_TILED_PROPERTY_NAME_PATH,
 												GameScene.TAG_TILED_PROPERTY_VALUE_FALSE)) {
-									TILEID_UNPATHABLE = pTMXTile
+									TILEID_UNPATHABLE[i] = pTMXTile
 											.getGlobalTileID();
 								}
 							}
@@ -216,9 +232,9 @@ public class ResourceManager {
 			// Load the Desert Map
 			Log.i("Location:", "TMXMap Loading...");
 			tmxTiledMapArray = new TMXTiledMap[MAP_RESOURCES.length];
-			for (int i = 0; i < MAP_RESOURCES.length; i++) {
+			for (i = 0; i < MAP_RESOURCES.length; i++) {
 				tmxTiledMapArray[i] = tmxLoader.loadFromAsset("tmx/"
-						+ MAP_RESOURCES[i]);
+						+ MAP_RESOURCES[i] + ".tmx");
 			}
 			tmxTiledMap = tmxTiledMapArray[0];
 			Log.i("Location:", "TMXMap Loaded");
@@ -230,6 +246,23 @@ public class ResourceManager {
 
 	public void unloadGameResource() {
 		gameTextureAtlas.unload();
+
+		tmxTiledMap = null;
+		texPlay = null;
+		texPause = null;
+		towerRemoveButtonTexture = null;
+		bulletTexture = null;
+		hitAreaGoodTexture = null;
+		hitAreaBadTexture = null;
+		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
+			enemyTexture[i] = null;
+		}
+		for (int i = 0; i < TOWER_RESOURCES.length; i++) {
+			towerTexture[i] = null;
+		}
+		for (int i = 0; i < MAP_RESOURCES.length; i++) {
+			tmxTiledMapArray[i] = null;
+		}
 	}
 
 	public void loadMainMenuResources() {
@@ -277,21 +310,74 @@ public class ResourceManager {
 
 	public void unloadMainMenuResources() {
 		mainMenuTextureAtlas.unload();
-		
+
 		humanTexture = null;
 		natureTexture = null;
 		treeTexture = null;
 		titleTexture = null;
 		backgroundTexture = null;
 		grassTexture = null;
-	}
 
-	public void loadMapSelectResources() {
-
+		mainMenuTextureAtlas = null;
 	}
 
 	public void loadLevelSelectResources() {
+		loadLevelSelectGraphics();
+	}
 
+	private void loadLevelSelectGraphics() {
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/level/");
+
+		levelSelectTextureAtlas = new BuildableBitmapTextureAtlas(
+				activity.getTextureManager(), 1024, 1024);
+		
+		mapTextures = new ITextureRegion[MAP_RESOURCES.length];
+		for (int i = 0; i < mapTextures.length; i++) {
+			mapTextures[i] = BitmapTextureAtlasTextureRegionFactory
+					.createFromAsset(levelSelectTextureAtlas, activity,
+							MAP_RESOURCES[i] + ".png");
+		}
+
+		difficultEasyTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "easy.png");
+		difficultNormalTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity,
+						"normal.png");
+		difficultHardTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "hard.png");
+		backButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "back.png");
+
+		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "background_resized.png");
+		
+		prevButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "previous.png");
+		
+		nextButtonTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(levelSelectTextureAtlas, activity, "next.png");
+
+		try {
+			levelSelectTextureAtlas
+					.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(
+							0, 1, 0));
+			levelSelectTextureAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void unloadLevelSelectResources() {
+		levelSelectTextureAtlas.unload();
+		for (int i = 0; i < mapTextures.length; i++) {
+			mapTextures[i] = null;
+		}
+		mapTextures = null;
+		difficultEasyTexture = null;
+		difficultNormalTexture = null;
+		difficultHardTexture = null;
+		levelSelectTextureAtlas = null;
 	}
 
 	public void loadFonts() {
@@ -317,6 +403,10 @@ public class ResourceManager {
 		font10.unload();
 		font20.unload();
 		font40.unload();
+
+		font10 = null;
+		font20 = null;
+		font40 = null;
 	}
 	// ===========================================================
 	// Inner and Anonymous Classes

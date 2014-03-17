@@ -48,11 +48,9 @@ IOnMenuItemClickListener {
 			float pMenuItemLocalX, float pMenuItemLocalY) {
 		switch (pMenuItem.getID()) {
 		case MENU_PLAY:
-			Log.e("Jared", "MENU_PLAY");
-			SceneManager.getInstance().loadGameScene(engine);
+			SceneManager.getInstance().loadLevelSelectScene();
 			break;
 		case MENU_OPT:
-			Log.e("Jared", "MENU_OPT");
 			break;
 		}
 		return false;
@@ -80,11 +78,11 @@ IOnMenuItemClickListener {
 		// Button
 		final IMenuItem btnPlay = new ScaleMenuItemDecorator(
 				new SpriteMenuItem(MENU_PLAY, resourceManager.btnPlayTexture,
-						vbom), 1.1f, 1);
+						vbom), 1.2f, 1);
 
 		final IMenuItem btnOption = new ScaleMenuItemDecorator(
 				new SpriteMenuItem(MENU_OPT, resourceManager.btnOptionsTexture,
-						vbom), 1.1f, 1);
+						vbom), 1.2f, 1);
 		
 		btnPlay.setPosition(-500, -500);
 		btnOption.setPosition(-500, -500);
@@ -162,10 +160,9 @@ IOnMenuItemClickListener {
 		menuChildScene.attachChild(natureSprite);
 
 		menuChildScene.buildAnimations();
-
 		menuChildScene.setOnMenuItemClickListener(this);
+		
 		setBackgroundEnabled(false);
-
 		setChildScene(menuChildScene);
 	}
 

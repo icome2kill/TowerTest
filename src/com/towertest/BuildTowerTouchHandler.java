@@ -249,7 +249,7 @@ public class BuildTowerTouchHandler implements IOnAreaTouchListener {
 			GameActivity.currentXoffset = 0;
 			GameActivity.currentYoffset = 0;
 
-			scene.showTowerDetails(thisTower, true);
+			scene.showTowerDetails(thisTower, true, true);
 			if (showHitArea) {
 				// this.setHitAreaShown(scene, !this.getHitAreaShown()); //
 				// toggle hit area circle

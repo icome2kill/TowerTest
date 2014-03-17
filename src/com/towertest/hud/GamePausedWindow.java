@@ -78,7 +78,6 @@ public class GamePausedWindow extends Rectangle {
 
 	@Override
 	public boolean detachSelf() {
-		
 		return super.detachSelf();
 	}
 	

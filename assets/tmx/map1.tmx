@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="14" height="7" tilewidth="56" tileheight="56">
+<map version="1.0" orientation="orthogonal" width="13" height="7" tilewidth="56" tileheight="56">
  <tileset firstgid="1" name="desert_tiled" tilewidth="96" tileheight="96">
   <image source="gfx/desert_tiled.png" width="768" height="576"/>
   <tile id="99">
-    <properties>
-      <property name="Buildable" value="False"/>
-      <property name="Path" value="False"/>
-    </properties>
-  </tile>
-  <tile id="29">
    <properties>
+    <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
   </properties>
 </tile>
-<tile id="30">
- <properties>
-  <property name="Buildable" value="False"/>
-  <property name="Path" value="False"/>
-</properties>
-</tile>
-<tile id="33">
- <properties>
-  <property name="Path" value="True"/>
-</properties>
-</tile>
-<tile id="39">
- <properties>
-  <property name="Waypoint" value="Start"/>
-</properties>
-</tile>
-</tileset>
-<layer name="Tile Layer 1" width="14" height="7">
+  <tile id="29">
+   <properties>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="30">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="33">
+   <properties>
+    <property name="Path" value="True"/>
+   </properties>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="Waypoint" value="Start"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Tile Layer 1" width="13" height="7">
   <data>
    <tile gid="34"/>
    <tile gid="34"/>
@@ -43,7 +43,6 @@
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="34"/>
-   <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="34"/>
    <tile gid="30"/>
@@ -56,7 +55,6 @@
    <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="30"/>
    <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="34"/>
@@ -68,7 +66,6 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="34"/>
-   <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="34"/>
@@ -84,33 +81,30 @@
    <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
    <tile gid="31"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="31"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
@@ -129,7 +123,6 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="30"/>
- </data>
-</layer>
+  </data>
+ </layer>
 </map>

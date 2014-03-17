@@ -17,13 +17,16 @@ public class TowerRange extends Sprite {
 	 * @param pTextureRegion
 	 * @param tvbom
 	 */
-	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion, VertexBufferObjectManager tvbom) {
+	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion,
+			VertexBufferObjectManager tvbom) {
 		super(pX, pY, pTextureRegion, tvbom);
 		this.setZIndex(zIndex);
 	}
-	
-	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion, VertexBufferObjectManager tvbom, int range) {
-		super(pX, pY, Utils.getXFromCol(range), Utils.getXFromCol(range), pTextureRegion, tvbom);
+
+	public TowerRange(float pX, float pY, ITextureRegion pTextureRegion,
+			VertexBufferObjectManager tvbom, int range) {
+		super(pX, pY, Utils.getXFromCol(range + 1), Utils
+				.getXFromCol(range + 1), pTextureRegion, tvbom);
 		this.setZIndex(zIndex);
 	}
 }

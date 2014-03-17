@@ -1,18 +1,17 @@
 package com.towertest.hud;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.util.color.Color;
 
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
 import com.towertest.scenes.GameScene;
 
-public class GameOverWindow extends Rectangle {
+public class GameOverWindow extends Sprite {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -30,14 +29,14 @@ public class GameOverWindow extends Rectangle {
 	// Constructors
 	// ===========================================================
 	public GameOverWindow(VertexBufferObjectManager vbom) {
-		super(0, 0, 800, 480, vbom);
+		super(100, 50, 600, 380, ResourceManager.getInstance().backgroundTexture, vbom);
 
-		statusText = new Text(200, 150, ResourceManager.getInstance().font40,
+		statusText = new Text(0, 0, ResourceManager.getInstance().font40,
 				"You lose! won", vbom);
-		scoreText = new Text(200, 200, ResourceManager.getInstance().font40,
+		scoreText = new Text(0, 0, ResourceManager.getInstance().font40,
 				"0123456789", vbom);
-
-		retryButton = new ButtonSprite(0, 250,
+		
+		retryButton = new ButtonSprite(0, 0,
 				ResourceManager.getInstance().btnPlayTexture, vbom,
 				new OnClickListener() {
 
@@ -48,7 +47,7 @@ public class GameOverWindow extends Rectangle {
 						SceneManager.getInstance().loadGameScene(ResourceManager.getInstance().engine);
 					}
 				});
-		quitButton = new ButtonSprite(400, 250,
+		quitButton = new ButtonSprite(0, 0,
 				ResourceManager.getInstance().btnOptionsTexture, vbom,
 				new OnClickListener() {
 
@@ -60,7 +59,11 @@ public class GameOverWindow extends Rectangle {
 					}
 				});
 		
-		setColor(new Color(.8f, .8f, .8f, .8f));
+		statusText.setPosition(getWidth() / 2 - statusText.getWidth() / 2, 50);
+		scoreText.setPosition(getWidth() / 2 - scoreText.getWidth() / 2, 150);
+		
+		retryButton.setPosition(getWidth() / 4 - retryButton.getWidth() / 2, 250);
+		quitButton.setPosition(getWidth() * 3 / 4 - quitButton.getWidth() / 2, 250);
 
 		attachChild(statusText);
 		attachChild(scoreText);
@@ -89,10 +92,11 @@ public class GameOverWindow extends Rectangle {
 		scoreText.setText("Score: " + scene.getScores());
 		setPosition((camera.getWidth() - getWidth()) / 2, 0);
 		
-		camera.getHUD().registerTouchArea(quitButton);
-		camera.getHUD().registerTouchArea(retryButton);
-		
 		scene.clearTouchAreas();
+		camera.getHUD().clearTouchAreas();
+		
+		scene.registerTouchArea(quitButton);
+		scene.registerTouchArea(retryButton);
 		
 		scene.attachChild(this);
 	}
