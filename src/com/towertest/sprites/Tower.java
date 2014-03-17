@@ -189,7 +189,8 @@ public class Tower extends AnimatedSprite {
 					arrayBullets.add(spriteBullet);
 					lastFire = System.currentTimeMillis();
 					// TODO check sound settings
-					ResourceManager.getInstance().fireSound.play();
+//					ResourceManager.getInstance().fireSound.play();
+					
 					Sprite myBullet = this.getLastBulletSprite();
 					scene.attachChild(myBullet);
 

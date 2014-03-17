@@ -158,11 +158,11 @@ public class LevelSelectScene extends BaseScene implements
 		menuChildScene.attachChild(mapSelector);
 
 		IMenuItem nextBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_NEXT, resourceManager.nextButtonTexture, vbom), 1.2f,
+				MENU_ID_NEXT, resourceManager.btnNextTexture, vbom), 1.2f,
 				1.0f);
 
 		IMenuItem prevBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_PREV, resourceManager.prevButtonTexture, vbom), 1.2f,
+				MENU_ID_PREV, resourceManager.btnPrevTexture, vbom), 1.2f,
 				1.0f);
 
 		prevBtn.setPosition(10, 134);
@@ -183,7 +183,7 @@ public class LevelSelectScene extends BaseScene implements
 				MENU_ID_HARD, 226, 87, resourceManager.difficultHardTexture,
 				vbom), 1.2f, 1.0f);
 		IMenuItem backBtn = new ScaleMenuItemDecorator(new SpriteMenuItem(
-				MENU_ID_BACK, resourceManager.backButtonTexture, vbom), 1.2f,
+				MENU_ID_BACK, resourceManager.btnBackTexture, vbom), 1.2f,
 				1.0f);
 
 		easyBtn.setPosition(GameActivity.CAMERA_WIDTH / 4 - easyBtn.getWidth() / 2, 400);

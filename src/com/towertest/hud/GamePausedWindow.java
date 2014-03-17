@@ -31,7 +31,7 @@ public class GamePausedWindow extends Rectangle {
 		super(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
 
 		restartButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().restartButtonTexture, vbom,
+				ResourceManager.getInstance().btnRestartTexture, vbom,
 				new OnClickListener() {
 					@Override
 					public void onClick(ButtonSprite pButtonSprite,
@@ -41,7 +41,7 @@ public class GamePausedWindow extends Rectangle {
 					}
 				});
 		levelSelectButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().lvlSelectButtonTexture, vbom,
+				ResourceManager.getInstance().btnLvlSelectTexture, vbom,
 				new OnClickListener() {
 
 					@Override
@@ -51,7 +51,7 @@ public class GamePausedWindow extends Rectangle {
 					}
 				});
 		menuButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().mainMenuButtonTexture, vbom,
+				ResourceManager.getInstance().btnMainMenuTexture, vbom,
 				new OnClickListener() {
 					@Override
 					public void onClick(ButtonSprite pButtonSprite,

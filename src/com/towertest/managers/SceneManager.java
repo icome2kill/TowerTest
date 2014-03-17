@@ -4,6 +4,8 @@ import org.andengine.engine.Engine;
 
 import com.towertest.scenes.BaseScene;
 import com.towertest.scenes.GameScene;
+import com.towertest.scenes.HelpScene;
+import com.towertest.scenes.HighScoresScene;
 import com.towertest.scenes.LevelSelectScene;
 import com.towertest.scenes.MainMenuScene;
 
@@ -19,7 +21,8 @@ public class SceneManager {
 	private BaseScene menuScene;
 	private BaseScene gameScene;
 	private BaseScene levelSelectScene;
-	private BaseScene mapSelectScene;
+	private BaseScene helpScene;
+	private BaseScene highScoresScene;
 
 	private BaseScene currentScene = null;
 	private SceneType currentSceneType = null;
@@ -56,8 +59,13 @@ public class SceneManager {
 		case LELEL_SELECT_SCENE:
 			setScene(levelSelectScene);
 			break;
-		case MAP_SELECT_SCENE:
-			setScene(mapSelectScene);
+		case HELP_SCENE:
+			setScene(helpScene);
+			break;
+		case HIGHSCORES_SCENE:
+			setScene(highScoresScene);
+			break;
+		default:
 			break;
 		}
 	}
@@ -97,19 +105,45 @@ public class SceneManager {
 		levelSelectScene = new LevelSelectScene();
 		setScene(levelSelectScene);
 	}
+	
+	public void loadHelpScene() {
+		disposeCurrentScene();
+		ResourceManager.getInstance().loadHelpResources();
+		helpScene = new HelpScene();
+		setScene(helpScene);
+	}
+	
+	public void loadHighScoresScene() {
+		disposeCurrentScene();
+		ResourceManager.getInstance().loadHelpResources();
+		highScoresScene = new HighScoresScene();
+		setScene(highScoresScene);
+	}
 
 	private void disposeCurrentScene() {
 		if (currentSceneType != null) {
 			switch (currentSceneType) {
 			case MENU_SCENE:
 				ResourceManager.getInstance().unloadMainMenuResources();
+				menuScene = null;
 				break;
 			case GAME_SCENE:
 				ResourceManager.getInstance().unloadGameResource();
+				gameScene = null;
 				break;
-			case MAP_SELECT_SCENE:
+			case HELP_SCENE:
+				ResourceManager.getInstance().unloadHelpResources();
+				helpScene = null;
 				break;
 			case LELEL_SELECT_SCENE:
+				ResourceManager.getInstance().unloadLevelSelectResources();
+				levelSelectScene = null;
+				break;
+			case HIGHSCORES_SCENE:
+				ResourceManager.getInstance().unloadHighScoresResources();
+				highScoresScene = null;
+				break;
+			default:
 				break;
 			}
 		}
@@ -122,6 +156,6 @@ public class SceneManager {
 	// Inner and Anonymous Classes
 	// ===========================================================
 	public static enum SceneType {
-		MENU_SCENE, LELEL_SELECT_SCENE, MAP_SELECT_SCENE, GAME_SCENE
+		MENU_SCENE, LELEL_SELECT_SCENE, HELP_SCENE, GAME_SCENE, HIGHSCORES_SCENE
 	}
 }

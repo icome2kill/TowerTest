@@ -74,21 +74,15 @@ import com.towertest.sprites.Tower;
 @SuppressWarnings("unused")
 public class GameActivity extends SimpleBaseGameActivity {
 	private ResourceManager resourceManager;
-	
+
 	public static int CAMERA_WIDTH = 960;
 	public static int CAMERA_HEIGHT = 576;
-	
+
 	private Camera camera;
 	/** used to offset the pan to adjust for panning from a tower */
 	public static float currentXoffset = 0;
 	/** used to offset the pan to adjust for panning from a tower */
 	public static float currentYoffset = 0;
-	// private Camera camera;
-
-	// ========================================
-	// Others
-	// ========================================
-	// for touches
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -102,36 +96,41 @@ public class GameActivity extends SimpleBaseGameActivity {
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		final EngineOptions mEngine = new EngineOptions(true,
-				ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), camera);
+				ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(),
+				camera);
 
-//		if (MultiTouch.isSupported(this)) {
-//			if (MultiTouch.isSupportedDistinct(this))
-//				Toast.makeText(this,
-//						"MultiTouch detected Pinch Zoom will work properly!",
-//						Toast.LENGTH_SHORT).show();
-//			else
-//				Toast.makeText(
-//						this,
-//						"MultiTouch detected, but your device has problems distinguishing between fingers",
-//						Toast.LENGTH_LONG).show();
-//		} else
-//			Toast.makeText(
-//					this,
-//					"Sorry your device does NOT support MultiTouch! Use Zoom Buttons.",
-//					Toast.LENGTH_LONG).show();
+		// if (MultiTouch.isSupported(this)) {
+		// if (MultiTouch.isSupportedDistinct(this))
+		// Toast.makeText(this,
+		// "MultiTouch detected Pinch Zoom will work properly!",
+		// Toast.LENGTH_SHORT).show();
+		// else
+		// Toast.makeText(
+		// this,
+		// "MultiTouch detected, but your device has problems distinguishing between fingers",
+		// Toast.LENGTH_LONG).show();
+		// } else
+		// Toast.makeText(
+		// this,
+		// "Sorry your device does NOT support MultiTouch! Use Zoom Buttons.",
+		// Toast.LENGTH_LONG).show();
 		mEngine.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
 		return mEngine;
 	}
+
 	/**
 	 * Load all game resources
 	 */
 	@Override
 	protected void onCreateResources() {
 		Log.i("Location:", "onCreateResources");
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		
-		ResourceManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
+		ResourceManager.prepareManager(mEngine, this, camera,
+				getVertexBufferObjectManager());
 		resourceManager = ResourceManager.getInstance();
+		resourceManager.loadMusicResources();
+		if (resourceManager.bgMusic != null) {
+			resourceManager.bgMusic.play();
+		}
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class GameActivity extends SimpleBaseGameActivity {
 		SceneManager.getInstance().loadMainMenuScene();
 		return SceneManager.getInstance().getCurrentScene();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -154,6 +153,5 @@ public class GameActivity extends SimpleBaseGameActivity {
 	public void onBackPressed() {
 		SceneManager.getInstance().getCurrentScene().onBackPressed();
 	}
-
 	// END OF CLASS
 }

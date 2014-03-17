@@ -25,13 +25,12 @@ IOnMenuItemClickListener {
 	// ===========================================================
 	private static final int MENU_PLAY = 0;
 	private static final int MENU_HELP = 1;
-	private static final int MENU_BACK = 2;
+	private static final int MENU_HIGHSCORES = 2;
 
 	// ===========================================================
 	// Fields
 	// ===========================================================
 	private MenuScene menuChildScene;
-	private IMenuItem btnBack;
 
 	// ===========================================================
 	// Constructors
@@ -52,8 +51,10 @@ IOnMenuItemClickListener {
 			SceneManager.getInstance().loadLevelSelectScene();
 			return true;
 		case MENU_HELP:
+			SceneManager.getInstance().loadHelpScene();
 			return true;
-		case MENU_BACK:
+		case MENU_HIGHSCORES:
+			SceneManager.getInstance().loadHighScoresScene();
 			return true;
 		}
 		return false;
@@ -83,12 +84,17 @@ IOnMenuItemClickListener {
 				new SpriteMenuItem(MENU_PLAY, resourceManager.btnPlayTexture,
 						vbom), 1.2f, 1);
 
-		final IMenuItem btnOption = new ScaleMenuItemDecorator(
-				new SpriteMenuItem(MENU_HELP, resourceManager.btnOptionsTexture,
+		final IMenuItem btnHelp = new ScaleMenuItemDecorator(
+				new SpriteMenuItem(MENU_HELP, resourceManager.btnHelpTexture,
+						vbom), 1.2f, 1);
+		
+		final IMenuItem btnHighScores = new ScaleMenuItemDecorator(
+				new SpriteMenuItem(MENU_HELP, resourceManager.btnHighScoresTexture,
 						vbom), 1.2f, 1);
 		
 		btnPlay.setPosition(-500, -500);
-		btnOption.setPosition(-500, -500);
+		btnHelp.setPosition(-500, -500);
+		btnHighScores.setPosition(-500, -500);
 		
 		// Grass Sprite
 		final Sprite grassSprite = new Sprite(-500, -500, GameActivity.CAMERA_WIDTH, 161 * GameActivity.CAMERA_WIDTH / 512, ResourceManager.getInstance().grassTexture, vbom);
@@ -135,7 +141,8 @@ IOnMenuItemClickListener {
 											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 												grassSprite.setPosition(0, camera.getHeight() - grassSprite.getHeight());
 												btnPlay.setPosition(camera.getWidth() / 2 - btnPlay.getWidth() / 2, 320);
-												btnOption.setPosition(camera.getWidth() / 2 - btnOption.getWidth() / 2, 400);
+												btnHelp.setPosition(camera.getWidth() / 2 - btnHelp.getWidth() / 2, 400);
+												btnHighScores.setPosition(camera.getWidth() / 2 - btnHelp.getWidth() / 2, 480);
 											}
 											
 											@Override
@@ -145,10 +152,12 @@ IOnMenuItemClickListener {
 										});
 										grassSprite.registerEntityModifier(modifier);
 										btnPlay.registerEntityModifier(modifier);
-										btnOption.registerEntityModifier(modifier);
+										btnHelp.registerEntityModifier(modifier);
+										btnHighScores.registerEntityModifier(modifier);
 										menuChildScene.attachChild(grassSprite);
 										menuChildScene.addMenuItem(btnPlay);
-										menuChildScene.addMenuItem(btnOption);
+										menuChildScene.addMenuItem(btnHelp);
+										menuChildScene.addMenuItem(btnHighScores);
 									}
 								}));
 							}
@@ -162,7 +171,7 @@ IOnMenuItemClickListener {
 		
 		menuChildScene.attachChild(natureSprite);
 
-		menuChildScene.buildAnimations();
+//		menuChildScene.buildAnimations();
 		menuChildScene.setOnMenuItemClickListener(this);
 		
 		setBackgroundEnabled(false);
@@ -179,7 +188,7 @@ IOnMenuItemClickListener {
 
 	@Override
 	public SceneType getSceneType() {
-		return null;
+		return SceneType.MENU_SCENE;
 	}
 
 	@Override

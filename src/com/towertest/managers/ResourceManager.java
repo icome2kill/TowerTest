@@ -2,6 +2,8 @@ package com.towertest.managers;
 
 import java.io.IOException;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
@@ -61,6 +63,11 @@ public class ResourceManager {
 	public Engine engine;
 	public GameActivity activity;
 
+	// Common textures region
+	public ITextureRegion backgroundTexture;
+	public ITextureRegion btnBackTexture;
+	public Music bgMusic;
+
 	private BuildableBitmapTextureAtlas gameTextureAtlas;
 	public ITiledTextureRegion[] towerTexture;
 	public ITiledTextureRegion[] enemyTexture;
@@ -73,17 +80,15 @@ public class ResourceManager {
 	public TMXTiledMap tmxTiledMap;
 	public ITextureRegion towerRemoveButtonTexture;
 	public Sound fireSound;
-
-	public ITextureRegion resumeButtonTexture;
-	public ITextureRegion lvlSelectButtonTexture;
-	public ITextureRegion mainMenuButtonTexture;
-	public ITextureRegion restartButtonTexture;
+	public ITextureRegion btnResumeTexture;
+	public ITextureRegion btnLvlSelectTexture;
+	public ITextureRegion btnMainMenuTexture;
+	public ITextureRegion btnRestartTexture;
 
 	private BuildableBitmapTextureAtlas mainMenuTextureAtlas;
-	public ITextureRegion btnOptionsTexture;
-	public ITextureRegion btnAboutTexture;
+	public ITextureRegion btnHelpTexture;
+	public ITextureRegion btnHighScoresTexture;
 	public ITextureRegion btnPlayTexture;
-	public ITextureRegion backgroundTexture;
 	public ITextureRegion titleTexture;
 	public ITextureRegion treeTexture;
 	public ITextureRegion humanTexture;
@@ -95,9 +100,14 @@ public class ResourceManager {
 	public ITextureRegion difficultEasyTexture;
 	public ITextureRegion difficultNormalTexture;
 	public ITextureRegion difficultHardTexture;
-	public ITextureRegion backButtonTexture;
-	public ITextureRegion nextButtonTexture;
-	public ITextureRegion prevButtonTexture;
+	public ITextureRegion btnNextTexture;
+	public ITextureRegion btnPrevTexture;
+
+	private BuildableBitmapTextureAtlas helpTextureAtlas;
+	public ITextureRegion instructionPanelTexture;
+
+	private BuildableBitmapTextureAtlas highScoresTextureAtlas;
+	public ITextureRegion highScoresPanelTexture;
 
 	public Font font10;
 	public Font font20;
@@ -191,13 +201,13 @@ public class ResourceManager {
 		texPlay = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "play.png");
 
-		resumeButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnResumeTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "resume.png");
-		lvlSelectButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnLvlSelectTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "lvl_select.png");
-		restartButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnRestartTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "restart.png");
-		mainMenuButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnMainMenuTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "main_menu.png");
 
 		try {
@@ -268,10 +278,10 @@ public class ResourceManager {
 		bulletTexture = null;
 		hitAreaGoodTexture = null;
 		hitAreaBadTexture = null;
-		resumeButtonTexture = null;
-		lvlSelectButtonTexture = null;
-		mainMenuButtonTexture = null;
-		restartButtonTexture = null;
+		btnResumeTexture = null;
+		btnLvlSelectTexture = null;
+		btnMainMenuTexture = null;
+		btnRestartTexture = null;
 
 		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
 			enemyTexture[i] = null;
@@ -297,8 +307,11 @@ public class ResourceManager {
 
 		btnPlayTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(mainMenuTextureAtlas, activity, "play.png");
-		btnOptionsTexture = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(mainMenuTextureAtlas, activity, "options.png");
+		btnHelpTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(mainMenuTextureAtlas, activity, "help.png");
+		btnHighScoresTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(mainMenuTextureAtlas, activity,
+						"highscores.png");
 		humanTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				mainMenuTextureAtlas, activity, "human.png");
 		natureTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
@@ -364,18 +377,18 @@ public class ResourceManager {
 						"normal.png");
 		difficultHardTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity, "hard.png");
-		backButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnBackTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity, "back.png");
 
 		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity,
 						"background_resized.png");
 
-		prevButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnPrevTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity,
 						"previous.png");
 
-		nextButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnNextTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(levelSelectTextureAtlas, activity, "next.png");
 
 		try {
@@ -399,6 +412,87 @@ public class ResourceManager {
 		difficultNormalTexture = null;
 		difficultHardTexture = null;
 		levelSelectTextureAtlas = null;
+	}
+
+	public void loadHelpResources() {
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/help/");
+		helpTextureAtlas = new BuildableBitmapTextureAtlas(
+				activity.getTextureManager(), 512, 512);
+
+		instructionPanelTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(helpTextureAtlas, activity,
+						"instruction_panel.png");
+
+		btnBackTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(helpTextureAtlas, activity, "back.png");
+
+		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(helpTextureAtlas, activity,
+						"background_resized.png");
+
+		try {
+			helpTextureAtlas
+					.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(
+							0, 1, 0));
+			helpTextureAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void unloadHelpResources() {
+		helpTextureAtlas.unload();
+		helpTextureAtlas = null;
+		btnBackTexture = null;
+		instructionPanelTexture = null;
+	}
+
+	public void loadHighScoresResources() {
+		BitmapTextureAtlasTextureRegionFactory
+				.setAssetBasePath("gfx/highscores/");
+
+		highScoresTextureAtlas = new BuildableBitmapTextureAtlas(
+				activity.getTextureManager(), 512, 512);
+
+		backgroundTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(highScoresTextureAtlas, activity,
+						"background_resized.png");
+		highScoresPanelTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(helpTextureAtlas, activity,
+						"highscores_panel.png");
+
+		btnBackTexture = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(helpTextureAtlas, activity, "back.png");
+
+		try {
+			highScoresTextureAtlas
+					.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(
+							0, 1, 0));
+			highScoresTextureAtlas.load();
+		} catch (TextureAtlasBuilderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void unloadHighScoresResources() {
+		highScoresTextureAtlas.unload();
+		highScoresTextureAtlas = null;
+		helpTextureAtlas = null;
+		btnBackTexture = null;
+		highScoresPanelTexture = null;
+	}
+	
+	public void loadMusicResources() {
+		MusicFactory.setAssetBasePath("mfx/");
+		try {
+			bgMusic = MusicFactory.createMusicFromAsset(activity.getMusicManager(), activity, "bg_music.mp3");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void loadFonts() {
