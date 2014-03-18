@@ -414,7 +414,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 	@Override
 	public void onBackPressed() {
-
+		togglePauseGame();
 	}
 
 	@Override
