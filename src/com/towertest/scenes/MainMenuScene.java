@@ -1,17 +1,11 @@
 package com.towertest.scenes;
 
-import org.andengine.entity.IEntity;
-import org.andengine.entity.modifier.FadeInModifier;
-import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
-import org.andengine.entity.modifier.MoveModifier;
-import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.util.modifier.IModifier;
 
 import com.towertest.GameActivity;
 import com.towertest.managers.ResourceManager;
@@ -80,11 +74,11 @@ IOnMenuItemClickListener {
 
 		// Button
 		final IMenuItem btnPlay = new ScaleMenuItemDecorator(
-				new SpriteMenuItem(MENU_PLAY, resourceManager.btnPlayTexture,
+				new SpriteMenuItem(MENU_PLAY, 280, 87, resourceManager.btnPlayTexture,
 						vbom), 1.2f, 1);
 
 		final IMenuItem btnOption = new ScaleMenuItemDecorator(
-				new SpriteMenuItem(MENU_HELP, resourceManager.btnOptionsTexture,
+				new SpriteMenuItem(MENU_HELP, 280, 87, resourceManager.btnOptionsTexture,
 						vbom), 1.2f, 1);
 		
 //		btnPlay.setPosition(-500, -500);
@@ -160,8 +154,8 @@ IOnMenuItemClickListener {
 //			}
 //		}));
 		
-		btnPlay.setPosition(camera.getWidth() - btnPlay.getWidth(), 200);
-		btnOption.setPosition(camera.getWidth() - btnPlay.getWidth(), 300);
+		btnPlay.setPosition(camera.getWidth() - btnPlay.getWidth() - 25, 200);
+		btnOption.setPosition(camera.getWidth() - btnPlay.getWidth() - 25, 300);
 		
 		menuChildScene.addMenuItem(btnPlay);
 		menuChildScene.addMenuItem(btnOption);

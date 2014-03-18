@@ -357,6 +357,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
 			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
 		}
+		
+		switch (difficult) {
+		case 0: 
+			// Easy;
+			
+			break;
+		}
 
 //		waves = new Wave[] {
 //				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),

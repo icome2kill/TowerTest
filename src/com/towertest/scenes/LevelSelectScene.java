@@ -138,23 +138,22 @@ public class LevelSelectScene extends BaseScene implements
 	// Methods
 	// ===========================================================
 	private void createBackground() {
-//		menuChildScene.attachChild(new Sprite(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT,
-//				resourceManager.backgroundTexture, vbom));
+		menuChildScene.attachChild(new Sprite(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT,
+				resourceManager.backgroundTexture, vbom));
 		
-		Rectangle background = new Rectangle(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
-		background.setColor(Color.WHITE);
-		menuChildScene.attachChild(background);
+//		Rectangle background = new Rectangle(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
+//		background.setColor(Color.WHITE);
+//		menuChildScene.attachChild(background);
 		
 		menuChildScene.setBackgroundEnabled(false);
 	}
 
 	private void createMapSelector() {
 		GamePreferencesManager.getInstance().selectedMap = 0;
-		mapSelector = new Rectangle(0, 70, GameActivity.CAMERA_WIDTH * 3, GameActivity.CAMERA_HEIGHT / 2, vbom);
+		mapSelector = new Rectangle(0, 100, GameActivity.CAMERA_WIDTH * 3, GameActivity.CAMERA_HEIGHT / 2, vbom);
 		mapSelector.setAlpha(0f);
 		for (int i = 0; i < resourceManager.mapTextures.length; i++) {
-			Sprite mapSprite = new Sprite(0, 0, 480, 244,
-					resourceManager.mapTextures[i], vbom);
+			Sprite mapSprite = new Sprite(0, 0, resourceManager.mapTextures[i], vbom);
 			mapSprite.setPosition(
 					i * GameActivity.CAMERA_WIDTH + camera.getWidth() / 2 - mapSprite.getWidth() / 2,
 					0);
@@ -170,8 +169,8 @@ public class LevelSelectScene extends BaseScene implements
 				MENU_ID_PREV, resourceManager.prevButtonTexture, vbom), 1.2f,
 				1.0f);
 
-		prevBtn.setPosition(10, 134);
-		nextBtn.setPosition(GameActivity.CAMERA_WIDTH - prevBtn.getWidth(), 134);
+		prevBtn.setPosition(30, 234);
+		nextBtn.setPosition(GameActivity.CAMERA_WIDTH - prevBtn.getWidth() - 30, 234);
 
 		menuChildScene.addMenuItem(nextBtn);
 		menuChildScene.addMenuItem(prevBtn);
@@ -191,10 +190,10 @@ public class LevelSelectScene extends BaseScene implements
 				MENU_ID_BACK, resourceManager.backButtonTexture, vbom), 1.2f,
 				1.0f);
 
-		easyBtn.setPosition(GameActivity.CAMERA_WIDTH / 4 - easyBtn.getWidth() / 2, 400);
-		normalBtn.setPosition(GameActivity.CAMERA_WIDTH / 2 - hardBtn.getWidth() / 2, 400);
-		hardBtn.setPosition(GameActivity.CAMERA_WIDTH * 3/ 4 - normalBtn.getWidth() / 2, 400);
-		backBtn.setPosition(30, camera.getHeight() - backBtn.getHeight() - 30);
+		easyBtn.setPosition(GameActivity.CAMERA_WIDTH / 4 - easyBtn.getWidth() / 2, 450);
+		normalBtn.setPosition(GameActivity.CAMERA_WIDTH / 2 - hardBtn.getWidth() / 2, 450);
+		hardBtn.setPosition(GameActivity.CAMERA_WIDTH * 3/ 4 - normalBtn.getWidth() / 2, 450);
+		backBtn.setPosition(30, 30);
 
 		menuChildScene.addMenuItem(easyBtn);
 		menuChildScene.addMenuItem(normalBtn);

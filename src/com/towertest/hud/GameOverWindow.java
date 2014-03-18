@@ -38,7 +38,7 @@ public class GameOverWindow extends Rectangle {
 				"Scores: 0123456789", vbom);
 
 		retryButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().restartButtonTexture, vbom,
+				ResourceManager.getInstance().btnRestartTexture, vbom,
 				new OnClickListener() {
 
 					@Override
@@ -50,7 +50,7 @@ public class GameOverWindow extends Rectangle {
 					}
 				});
 		menuButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().mainMenuButtonTexture, vbom,
+				ResourceManager.getInstance().btnMainMenuTexture, vbom,
 				new OnClickListener() {
 
 					@Override

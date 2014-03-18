@@ -11,6 +11,7 @@ import org.andengine.util.color.Color;
 import com.towertest.GameActivity;
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
+import com.towertest.scenes.GameScene;
 
 public class GamePausedWindow extends Rectangle {
 	// ===========================================================
@@ -20,7 +21,7 @@ public class GamePausedWindow extends Rectangle {
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	private ButtonSprite restartButton;
+	private ButtonSprite resumeButton;
 	private ButtonSprite levelSelectButton;
 	private ButtonSprite menuButton;
 
@@ -30,18 +31,20 @@ public class GamePausedWindow extends Rectangle {
 	public GamePausedWindow(VertexBufferObjectManager vbom) {
 		super(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
 
-		restartButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().restartButtonTexture, vbom,
+		resumeButton = new ButtonSprite(0, 0, 
+				ResourceManager.getInstance().btnResumeTexture, vbom,
 				new OnClickListener() {
 					@Override
 					public void onClick(ButtonSprite pButtonSprite,
 							float pTouchAreaLocalX, float pTouchAreaLocalY) {
-						detachSelf();
-						SceneManager.getInstance().loadGameScene(null);
 					}
 				});
+		
+		resumeButton.setWidth(280);
+		resumeButton.setHeight(87);
+		
 		levelSelectButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().lvlSelectButtonTexture, vbom,
+				ResourceManager.getInstance().btnSelectLevelTexture, vbom,
 				new OnClickListener() {
 
 					@Override
@@ -51,7 +54,7 @@ public class GamePausedWindow extends Rectangle {
 					}
 				});
 		menuButton = new ButtonSprite(0, 0,
-				ResourceManager.getInstance().mainMenuButtonTexture, vbom,
+				ResourceManager.getInstance().btnMainMenuTexture, vbom,
 				new OnClickListener() {
 					@Override
 					public void onClick(ButtonSprite pButtonSprite,
@@ -60,8 +63,8 @@ public class GamePausedWindow extends Rectangle {
 					}
 				});
 
-		restartButton.setPosition(
-				GameActivity.CAMERA_WIDTH / 2 - restartButton.getWidth() / 2,
+		resumeButton.setPosition(
+				GameActivity.CAMERA_WIDTH / 2 - resumeButton.getWidth() / 2,
 				GameActivity.CAMERA_HEIGHT / 2 - levelSelectButton.getHeight() - 20);
 		levelSelectButton.setPosition(GameActivity.CAMERA_WIDTH / 2
 				- levelSelectButton.getWidth() / 2,
@@ -70,7 +73,7 @@ public class GamePausedWindow extends Rectangle {
 				GameActivity.CAMERA_WIDTH / 2 - menuButton.getWidth() / 2,
 				GameActivity.CAMERA_HEIGHT / 2 + levelSelectButton.getHeight() + 20);
 
-		attachChild(restartButton);
+		attachChild(resumeButton);
 		attachChild(levelSelectButton);
 		attachChild(menuButton);
 	}
@@ -86,10 +89,19 @@ public class GamePausedWindow extends Rectangle {
 	// ===========================================================
 	// Methods
 	// ===========================================================
-	public void show(Scene scene, Camera camera) {
+	public void show(final Scene scene, Camera camera) {
 		setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
+		
+		resumeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX,
+					float pTouchAreaLocalY) {
+				((GameScene) scene).togglePauseGame();
+			}
+		});
 
-		camera.getHUD().registerTouchArea(restartButton);
+		camera.getHUD().registerTouchArea(resumeButton);
 		camera.getHUD().registerTouchArea(levelSelectButton);
 		camera.getHUD().registerTouchArea(menuButton);
 

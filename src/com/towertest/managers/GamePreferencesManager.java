@@ -9,8 +9,8 @@ public class GamePreferencesManager {
 	// Fields
 	// ===========================================================
 	
-	public int selectedDifficult;
-	public int selectedMap;
+	public int selectedDifficult = 0;
+	public int selectedMap = 0;
 	public boolean soundOn = true;
 
 	// ===========================================================

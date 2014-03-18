@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="15" height="9" tilewidth="64" tileheight="64">
- <tileset firstgid="1" name="desert_tiled" tilewidth="96" tileheight="96">
-  <image source="gfx/desert_tiled.png" width="768" height="576"/>
+ <tileset firstgid="1" name="tmw_desert_spacing_resize_double" tilewidth="96" tileheight="96">
+  <image source="gfx/tmw_desert_spacing_resize_double.png" width="768" height="576"/>
   <tile id="99">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="25">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="26">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
@@ -13,7 +31,7 @@
     <property name="Path" value="False"/>
    </properties>
   </tile>
-  <tile id="30">
+  <tile id="32">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
@@ -22,6 +40,24 @@
   <tile id="33">
    <properties>
     <property name="Path" value="True"/>
+   </properties>
+  </tile>
+  <tile id="34">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="35">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="36">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
    </properties>
   </tile>
   <tile id="38">
@@ -36,7 +72,43 @@
     <property name="Path" value="False"/>
    </properties>
   </tile>
+  <tile id="40">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="41">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="44">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
   <tile id="45">
+   <properties>
+    <property name="Buildable" value="False"/>
+    <property name="Path" value="False"/>
+   </properties>
+  </tile>
+  <tile id="46">
    <properties>
     <property name="Buildable" value="False"/>
     <property name="Path" value="False"/>
@@ -45,28 +117,21 @@
  </tileset>
  <layer name="Tile Layer 1" width="15" height="9">
   <data>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="42"/>
+   <tile gid="37"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="30"/>
@@ -74,83 +139,93 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="33"/>
+   <tile gid="27"/>
+   <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="46"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="39"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="39"/>
-   <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="46"/>
+   <tile gid="33"/>
+   <tile gid="35"/>
+   <tile gid="34"/>
+   <tile gid="40"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="33"/>
+   <tile gid="35"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="40"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="33"/>
+   <tile gid="35"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="41"/>
+   <tile gid="35"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="30"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
+   <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="30"/>
    <tile gid="39"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
    <tile gid="34"/>
    <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
+   <tile gid="35"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="46"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="40"/>
+   <tile gid="47"/>
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
@@ -160,26 +235,23 @@
    <tile gid="30"/>
    <tile gid="30"/>
    <tile gid="30"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
-   <tile gid="34"/>
    <tile gid="30"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
-   <tile gid="40"/>
+   <tile gid="25"/>
+   <tile gid="44"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="26"/>
+   <tile gid="45"/>
   </data>
  </layer>
 </map>

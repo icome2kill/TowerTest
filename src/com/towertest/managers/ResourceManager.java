@@ -74,10 +74,10 @@ public class ResourceManager {
 	public ITextureRegion towerRemoveButtonTexture;
 	public Sound fireSound;
 
-	public ITextureRegion resumeButtonTexture;
-	public ITextureRegion lvlSelectButtonTexture;
-	public ITextureRegion mainMenuButtonTexture;
-	public ITextureRegion restartButtonTexture;
+	public ITextureRegion btnResumeTexture;
+	public ITextureRegion btnSelectLevelTexture;
+	public ITextureRegion btnMainMenuTexture;
+	public ITextureRegion btnRestartTexture;
 
 	private BuildableBitmapTextureAtlas mainMenuTextureAtlas;
 	public ITextureRegion btnOptionsTexture;
@@ -191,13 +191,13 @@ public class ResourceManager {
 		texPlay = BitmapTextureAtlasTextureRegionFactory.createFromAsset(
 				gameTextureAtlas, activity, "play.png");
 
-		resumeButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnResumeTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "resume.png");
-		lvlSelectButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnSelectLevelTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "lvl_select.png");
-		restartButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnRestartTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "restart.png");
-		mainMenuButtonTexture = BitmapTextureAtlasTextureRegionFactory
+		btnMainMenuTexture = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(gameTextureAtlas, activity, "main_menu.png");
 
 		try {
@@ -268,10 +268,10 @@ public class ResourceManager {
 		bulletTexture = null;
 		hitAreaGoodTexture = null;
 		hitAreaBadTexture = null;
-		resumeButtonTexture = null;
-		lvlSelectButtonTexture = null;
-		mainMenuButtonTexture = null;
-		restartButtonTexture = null;
+		btnResumeTexture = null;
+		btnSelectLevelTexture = null;
+		btnMainMenuTexture = null;
+		btnRestartTexture = null;
 
 		for (int i = 0; i < ENEMY_RESOURCES.length; i++) {
 			enemyTexture[i] = null;
