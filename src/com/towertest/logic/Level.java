@@ -70,7 +70,7 @@ public class Level {
 	}
 
 	public int getCurrentDelayBetweenWaves() {
-		currentDelayBetweenWaves = (int) waves[currentWaveNumber].getDelay() * waves[currentWaveNumber].getTotal();
+		currentDelayBetweenWaves = (int) (waves[currentWaveNumber].getDelay() * waves[currentWaveNumber].getTotal() * 2);
 		return currentDelayBetweenWaves;
 	}
 	

@@ -344,34 +344,62 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 		enemyPrototype = new Enemy[ResourceManager.ENEMY_RESOURCES.length];
 		arrayEn = new ArrayList<Enemy>();
 		arrayTower = new ArrayList<Tower>();
-
+		
 		EnemyBuilder enBuilder = new EnemyBuilder(this);
 
-		for (int i = 0; i < enemyPrototype.length; i++) {
-			enemyPrototype[i] = enBuilder
-					.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
-					.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
-					.setHealth(500 * (i + 1))
-					.setTexture(resourceManager.enemyTexture[i]).setSpeed(60f)
-					.build();
-
-			enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
-		}
-		
 		switch (difficult) {
-		case 0: 
-			// Easy;
-			
-			break;
-		}
+		case 0:
+			// Easy. 10 waves. Weak enemy
+			for (int i = 0; i < enemyPrototype.length; i++) {
+				enemyPrototype[i] = enBuilder
+						.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
+						.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
+						.setHealth(300 * (i + 1))
+						.setTexture(resourceManager.enemyTexture[i]).setSpeed(50f + i * 10f)
+						.build();
 
-//		waves = new Wave[] {
-//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[0] }, 2f),
-//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[1] }, 2f),
-//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[2] }, 2f),
-//				new Wave(new int[] { 2 }, new Enemy[] { enemyPrototype[3] }, 2f) };
-		
-		waves = new Wave[] { new Wave(new int [] { 1 }, new Enemy[] { enemyPrototype[0] }, 1f) };
+				enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
+			}
+			
+			waves = new Wave[10];
+			for (int i = 0; i < 10; i++) {
+				waves[i] = new Wave(new int[] { i * 5 + 10, i * 2 + 5 }, new Enemy[] { enemyPrototype[i % enemyPrototype.length], enemyPrototype[(i + 1) % enemyPrototype.length] }, 2f);
+			}
+			break;
+		case 1:
+			// Normal. 50 waves
+			for (int i = 0; i < enemyPrototype.length; i++) {
+				enemyPrototype[i] = enBuilder
+						.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
+						.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
+						.setHealth(400 * (i + 1))
+						.setTexture(resourceManager.enemyTexture[i]).setSpeed(50f + i * 15f)
+						.build();
+
+				enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
+			}
+			waves = new Wave[50];
+			for (int i = 0; i < 50; i++) {
+				waves[i] = new Wave(new int[] { i * 5 + 5, i * 2 + 2 }, new Enemy[] { enemyPrototype[i % enemyPrototype.length], enemyPrototype[(i + 1) % enemyPrototype.length] }, 2f);
+			}
+			break;
+		case 2:
+			// Hard. 100 waves.
+			for (int i = 0; i < enemyPrototype.length; i++) {
+				enemyPrototype[i] = enBuilder
+						.setX(Utils.getXFromCol(map.getStartLoc()[0].x))
+						.setY(Utils.getXFromCol(map.getStartLoc()[0].y))
+						.setHealth(500 * (i + 1))
+						.setTexture(resourceManager.enemyTexture[i]).setSpeed(50f + i * 20f)
+						.build();
+
+				enemyPrototype[i].createPath(lEnds[0], activity, tmxLayer, arrayEn);
+			}
+			waves = new Wave[100];
+			for (int i = 0; i < 100; i++) {
+				waves[i] = new Wave(new int[] { i * 5 + 5, i * 2 + 2 }, new Enemy[] { enemyPrototype[i % enemyPrototype.length], enemyPrototype[(i + 1) % enemyPrototype.length] }, 2f);
+			}
+		}
 
 		currentLevel = new Level(waves, map);
 	}
@@ -447,7 +475,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 						.getDelay(),
 				true, new ITimerCallback() {
 					Wave wave = currentLevel.getNextWave();
-
+					
 					@Override
 					public void onTimePassed(TimerHandler pTimerHandler) {
 						if (!isPaused) {

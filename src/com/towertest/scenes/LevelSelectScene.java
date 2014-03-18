@@ -11,7 +11,6 @@ import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.util.color.Color;
 
 import com.towertest.GameActivity;
 import com.towertest.managers.GamePreferencesManager;
