@@ -11,6 +11,7 @@ import org.andengine.util.color.Color;
 import com.towertest.GameActivity;
 import com.towertest.managers.ResourceManager;
 import com.towertest.managers.SceneManager;
+import com.towertest.scenes.GameScene;
 
 public class GamePausedWindow extends Rectangle {
 	// ===========================================================
@@ -23,12 +24,24 @@ public class GamePausedWindow extends Rectangle {
 	private ButtonSprite restartButton;
 	private ButtonSprite levelSelectButton;
 	private ButtonSprite menuButton;
+	private ButtonSprite resumeButton;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	public GamePausedWindow(VertexBufferObjectManager vbom) {
 		super(0, 0, GameActivity.CAMERA_WIDTH, GameActivity.CAMERA_HEIGHT, vbom);
+
+		resumeButton = new ButtonSprite(0, 0,
+				ResourceManager.getInstance().btnResumeTexture, vbom,
+				new OnClickListener() {
+					@Override
+					public void onClick(ButtonSprite pButtonSprite,
+							float pTouchAreaLocalX, float pTouchAreaLocalY) {
+						((GameScene) SceneManager.getInstance()
+								.getCurrentScene()).togglePauseGame();
+					}
+				});
 
 		restartButton = new ButtonSprite(0, 0,
 				ResourceManager.getInstance().btnRestartTexture, vbom,
@@ -60,16 +73,24 @@ public class GamePausedWindow extends Rectangle {
 					}
 				});
 
+		resumeButton.setPosition(
+				GameActivity.CAMERA_WIDTH / 2 - restartButton.getWidth() / 2,
+				GameActivity.CAMERA_HEIGHT / 2 - levelSelectButton.getHeight()
+						- restartButton.getHeight() - 40);
+
+		levelSelectButton.setPosition(GameActivity.CAMERA_WIDTH / 2
+				- levelSelectButton.getWidth() / 2, GameActivity.CAMERA_HEIGHT
+				/ 2 - restartButton.getHeight() - 20);
 		restartButton.setPosition(
 				GameActivity.CAMERA_WIDTH / 2 - restartButton.getWidth() / 2,
-				GameActivity.CAMERA_HEIGHT / 2 - levelSelectButton.getHeight() - 20);
-		levelSelectButton.setPosition(GameActivity.CAMERA_WIDTH / 2
-				- levelSelectButton.getWidth() / 2,
 				GameActivity.CAMERA_HEIGHT / 2);
 		menuButton.setPosition(
 				GameActivity.CAMERA_WIDTH / 2 - menuButton.getWidth() / 2,
-				GameActivity.CAMERA_HEIGHT / 2 + levelSelectButton.getHeight() + 20);
-
+				GameActivity.CAMERA_HEIGHT / 2 + levelSelectButton.getHeight()
+						+ 20);
+		
+		
+		attachChild(resumeButton);
 		attachChild(restartButton);
 		attachChild(levelSelectButton);
 		attachChild(menuButton);
@@ -89,6 +110,7 @@ public class GamePausedWindow extends Rectangle {
 	public void show(Scene scene, Camera camera) {
 		setColor(new Color(0.8f, 0.8f, 0.8f, 0.5f));
 
+		camera.getHUD().registerTouchArea(resumeButton);
 		camera.getHUD().registerTouchArea(restartButton);
 		camera.getHUD().registerTouchArea(levelSelectButton);
 		camera.getHUD().registerTouchArea(menuButton);

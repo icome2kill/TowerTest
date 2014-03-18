@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import biz.abits.towertest.R;
@@ -72,6 +73,9 @@ public class CustomizedListView extends Activity {
 				if (id == 0) {
 					Intent intent = new Intent(CustomizedListView.this, GameActivity.class);
 					startActivity(intent);
+				}
+				else {
+					Toast.makeText(CustomizedListView.this, "Game under developemnt", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});		
